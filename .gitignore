@@ -1,0 +1,8 @@
+[Oo]bj
+[Bb]in
+/.vs
+*.csproj.user
+*.vcxproj.user
+*.sdf
+*.suo
+*.ubj

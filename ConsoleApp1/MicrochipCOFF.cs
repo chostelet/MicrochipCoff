@@ -1159,6 +1159,8 @@ namespace MCoff
                     switch (DerivedTypes[i])
                     {
                         case Symbol_DerivedType.DT_ARY:
+                            if (auxEntries.Count < 1)
+                                throw new InvalidDataException($"DT_ARY: missing auxiliary symbol entry.");
                             sb.Append(nameused ? "" : SymbolName);
                             nameused = true;
                             sb.Append("[");
