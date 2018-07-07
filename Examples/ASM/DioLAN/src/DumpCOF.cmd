@@ -1,0 +1,1 @@
+cromwell.exe -d -v -v -v .\bootloader.cof >CofDump.lst

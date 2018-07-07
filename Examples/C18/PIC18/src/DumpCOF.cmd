@@ -1,0 +1,1 @@
+cromwell.exe -d -v -v -v .\PIC18Legacy.cof >CofDump.lst

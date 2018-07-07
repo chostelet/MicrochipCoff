@@ -1217,34 +1217,6 @@ namespace MCoff
     }
 
     /// <summary>
-    /// Temporary Symbol Table Entry.
-    /// </summary>
-    public class SymbolEntry : IRenderer
-    {
-        public readonly Storage_Class StorageClass;
-
-        private AuxEntryBase XLatAuxEntry(AuxEntry e)
-        {
-            switch (StorageClass)
-            {
-                case Storage_Class.C_MOS:
-                case Storage_Class.C_MOU:
-                case Storage_Class.C_MOE:
-                    return new AuxEntry(e);
-
-                default:
-                    throw new InvalidOperationException($"Unknown translation for aux entry with STorClass={StorageClass}");
-            }
-        }
-
-        public void Render()
-        {
-            WriteLine();
-        }
-
-    }
-
-    /// <summary>
     /// Symbol Table Entry.
     /// </summary>
     public abstract class SymbolEntryBase : ISymbolEntry
@@ -1297,7 +1269,7 @@ namespace MCoff
 
         public virtual uint Value => 0;
 
-        public virtual byte NumAuxEntries => 0;
+        public abstract byte NumAuxEntries { get; }
 
         public SymbolType SymbolType { get; protected set; } = new SymbolType();
 
@@ -1469,6 +1441,8 @@ namespace MCoff
 
         public override RenderFlags RenderMask => RenderFlags.RDR_ALIAS;
 
+        public override byte NumAuxEntries => 0;
+
         public ALIAS_Symbol(ulong idx) :base(idx)
         {
         }
@@ -1485,6 +1459,8 @@ namespace MCoff
         public override Storage_Class Storage => Storage_Class.C_ARG;
 
         public override RenderFlags RenderMask => RenderFlags.RDR_ARG;
+
+        public override byte NumAuxEntries => 0;
 
         public ARG_Symbol(ulong idx) : base(idx)
         {
@@ -1503,13 +1479,27 @@ namespace MCoff
 
         public override RenderFlags RenderMask => RenderFlags.RDR_AUTO;
 
+        public override byte NumAuxEntries { get; }
+
+        public override string Name { get; }
+
+        public override uint Value { get; }
+
         public AUTO_Symbol(ulong idx) : base(idx)
         {
+            if (auxentries.Count > 1)
+                throw new InvalidDataException($"{Storage} : wrong number of auxiliary symbol entries.");
+            NumAuxEntries = (byte)auxentries.Count;
+            Name = n_name;
+            Value = n_value;
+            if (!SectInfo.IsAbsolute)
+                throw new InvalidDataException($"{Storage} : invalid section number {SectInfo.SectNum}.");
+            SymbolType = new SymbolType(n_type, auxentries);
         }
 
         public override void RenderDetails()
         {
-            WriteLine();
+            WriteLine($"'{SymbolType.Type2String(Name)}' at offset 0x{Value:X} (stack-relative)");
         }
 
     }
@@ -1519,6 +1509,8 @@ namespace MCoff
         public override Storage_Class Storage => Storage_Class.C_AUTOARG;
 
         public override RenderFlags RenderMask => RenderFlags.RDR_AUTOARG;
+
+        public override byte NumAuxEntries => 0;
 
         public AUTOARG_Symbol(ulong idx) : base(idx)
         {
@@ -1579,6 +1571,8 @@ namespace MCoff
 
         public override RenderFlags RenderMask => RenderFlags.RDR_EFCN;
 
+        public override byte NumAuxEntries => 0;
+
         public EFCN_Symbol(ulong idx) : base(idx)
         {
         }
@@ -1622,7 +1616,7 @@ namespace MCoff
 
         public override void RenderDetails()
         {
-            WriteLine($"{SymbolType.Type2String(Name)}, {Size} byte(s)");
+            WriteLine($"'{SymbolType.Type2String(Name)}', {Size} byte(s)");
         }
 
     }
@@ -1632,6 +1626,8 @@ namespace MCoff
         public override Storage_Class Storage => Storage_Class.C_EOF;
 
         public override RenderFlags RenderMask => RenderFlags.RDR_EOF;
+
+        public override byte NumAuxEntries => 0;
 
         public EOF_Symbol(ulong idx) : base(idx)
         {
@@ -1711,15 +1707,15 @@ namespace MCoff
         {
             if (SectInfo.IsUndefined)
             {
-                WriteLine($"extern {SymbolType.Type2String(Name)} = 0x{Value:X}");
+                WriteLine($"extern '{SymbolType.Type2String(Name)}' = 0x{Value:X}");
                 return;
             }
             if (SectInfo.IsAbsolute)
             {
-                WriteLine($"{SymbolType.Type2String(Name)} = 0x{Value:X} (Abs)");
+                WriteLine($"'{SymbolType.Type2String(Name)}' = 0x{Value:X} (Abs)");
                 return;
             }
-            WriteLine($"global {SymbolType.Type2String(Name)} at 0x{Value:X} in section '{SectInfo.Name}'");
+            WriteLine($"global '{SymbolType.Type2String(Name)}' at 0x{Value:X} in section '{SectInfo.Name}'");
         }
 
     }
@@ -1729,6 +1725,8 @@ namespace MCoff
         public override Storage_Class Storage => Storage_Class.C_EXTDEF;
 
         public override RenderFlags RenderMask => RenderFlags.RDR_EXTDEF;
+
+        public override byte NumAuxEntries => 0;
 
         public EXTDEF_Symbol(ulong idx) : base(idx)
         {
@@ -1821,7 +1819,7 @@ namespace MCoff
 
         public override void RenderDetails()
         {
-            WriteLine($"{SymbolType.Type2String(Name)}, {Size} bit(s) wide at offset {Value}");
+            WriteLine($"'{SymbolType.Type2String(Name)}', {Size} bit(s) wide at offset {Value}");
         }
 
     }
@@ -1872,6 +1870,8 @@ namespace MCoff
         public override Storage_Class Storage => Storage_Class.C_HIDDEN;
 
         public override RenderFlags RenderMask => RenderFlags.RDR_HIDDEN;
+
+        public override byte NumAuxEntries => 0;
 
         public HIDDEN_Symbol(ulong idx) : base(idx)
         {
@@ -1924,6 +1924,8 @@ namespace MCoff
 
         public override RenderFlags RenderMask => RenderFlags.RDR_LASTENT;
 
+        public override byte NumAuxEntries => 0;
+
         public LASTENT_Symbol(ulong idx) : base(idx)
         {
         }
@@ -1962,6 +1964,8 @@ namespace MCoff
 
         public override RenderFlags RenderMask => RenderFlags.RDR_LIST;
 
+        public override byte NumAuxEntries => 0;
+
         public override string Name { get; }
 
         public override uint Value { get; }
@@ -1989,13 +1993,27 @@ namespace MCoff
 
         public override RenderFlags RenderMask => RenderFlags.RDR_MOE;
 
+        public override byte NumAuxEntries { get; }
+
+        public override string Name { get; }
+
+        public override uint Value { get; }
+
         public MOE_Symbol(ulong idx) : base(idx)
         {
+            if (auxentries.Count > 1)
+                throw new InvalidDataException($"{Storage} : wrong number of auxiliary symbol entries.");
+            NumAuxEntries = (byte)auxentries.Count;
+            if (!SectInfo.IsAbsolute)
+                throw new InvalidDataException($"{Storage} : invalid section number {SectInfo.SectNum}.");
+            Name = n_name;
+            Value = n_value;
+            SymbolType = new SymbolType(n_type, auxentries);
         }
 
         public override void RenderDetails()
         {
-            WriteLine();
+            WriteLine($"'{SymbolType.Type2String(Name)}' at offset 0x{Value:X}");
         }
 
     }
@@ -2006,13 +2024,27 @@ namespace MCoff
 
         public override RenderFlags RenderMask => RenderFlags.RDR_MOS;
 
+        public override byte NumAuxEntries { get; }
+
+        public override string Name { get; }
+
+        public override uint Value { get; }
+
         public MOS_Symbol(ulong idx) : base(idx)
         {
+            if (auxentries.Count > 1)
+                throw new InvalidDataException($"{Storage} : wrong number of auxiliary symbol entries.");
+            NumAuxEntries = (byte)auxentries.Count;
+            if (!SectInfo.IsAbsolute)
+                throw new InvalidDataException($"{Storage} : invalid section number {SectInfo.SectNum}.");
+            Name = n_name;
+            Value = n_value;
+            SymbolType = new SymbolType(n_type, auxentries);
         }
 
         public override void RenderDetails()
         {
-            WriteLine();
+            WriteLine($"'{SymbolType.Type2String(Name)}' at offset 0x{Value:X}");
         }
 
     }
@@ -2023,17 +2055,27 @@ namespace MCoff
 
         public override RenderFlags RenderMask => RenderFlags.RDR_MOU;
 
-        public override byte NumAuxEntries => 0;
+        public override byte NumAuxEntries { get; }
 
         public override string Name { get; }
 
+        public override uint Value { get; }
+
         public MOU_Symbol(ulong idx) : base(idx)
         {
+            if (auxentries.Count > 1)
+                throw new InvalidDataException($"{Storage} : wrong number of auxiliary symbol entries.");
+            NumAuxEntries = (byte)auxentries.Count;
+            if (!SectInfo.IsAbsolute)
+                throw new InvalidDataException($"{Storage} : invalid section number {SectInfo.SectNum}.");
+            Name = n_name;
+            Value = n_value;
+            SymbolType = new SymbolType(n_type, auxentries);
         }
 
         public override void RenderDetails()
         {
-            WriteLine();
+            WriteLine($"'{SymbolType.Type2String(Name)}' at offset 0x{Value:X}");
         }
 
     }
@@ -2043,6 +2085,8 @@ namespace MCoff
         public override Storage_Class Storage => Storage_Class.C_NULL;
 
         public override RenderFlags RenderMask => RenderFlags.RDR_NULL;
+
+        public override byte NumAuxEntries => 0;
 
         public NULL_Symbol(ulong idx) : base(idx)
         {
@@ -2061,6 +2105,8 @@ namespace MCoff
 
         public override RenderFlags RenderMask => RenderFlags.RDR_REG;
 
+        public override byte NumAuxEntries => 0;
+
         public REG_Symbol(ulong idx) : base(idx)
         {
         }
@@ -2077,6 +2123,8 @@ namespace MCoff
         public override Storage_Class Storage => Storage_Class.C_REGPARM;
 
         public override RenderFlags RenderMask => RenderFlags.RDR_REGPARM;
+
+        public override byte NumAuxEntries => 0;
 
         public REGPARM_Symbol(ulong idx) : base(idx)
         {
@@ -2149,15 +2197,15 @@ namespace MCoff
         {
             if (SectInfo.IsUndefined)
             {
-                WriteLine($"extern static {SymbolType.Type2String(Name)} = 0x{Value:X}");
+                WriteLine($"extern static '{SymbolType.Type2String(Name)}' = 0x{Value:X}");
                 return;
             }
             if (SectInfo.IsAbsolute)
             {
-                WriteLine($"{SymbolType.Type2String(Name)} = 0x{Value:X} (Abs)");
+                WriteLine($"'{SymbolType.Type2String(Name)}' = 0x{Value:X} (Abs)");
                 return;
             }
-            WriteLine($"static {SymbolType.Type2String(Name)} at 0x{Value:X} in section '{SectInfo.Section.SectionName}'");
+            WriteLine($"static '{SymbolType.Type2String(Name)}' at 0x{Value:X} in section '{SectInfo.Section.SectionName}'");
         }
 
     }
@@ -2194,7 +2242,7 @@ namespace MCoff
 
         public override void RenderDetails()
         {
-            WriteLine($"{SymbolType.Type2String(Name)}, {Size} byte(s)");
+            WriteLine($"'{SymbolType.Type2String(Name)}', {Size} byte(s)");
         }
 
     }
@@ -2204,6 +2252,8 @@ namespace MCoff
         public override Storage_Class Storage => Storage_Class.C_TPDEF;
 
         public override RenderFlags RenderMask => RenderFlags.RDR_TPDEF;
+
+        public override byte NumAuxEntries => 0;
 
         public TPDEF_Symbol(ulong idx) : base(idx)
         {
@@ -2221,6 +2271,8 @@ namespace MCoff
         public override Storage_Class Storage => Storage_Class.C_ULABEL;
 
         public override RenderFlags RenderMask => RenderFlags.RDR_ULABEL;
+
+        public override byte NumAuxEntries => 0;
 
         public ULABEL_Symbol(ulong idx) : base(idx)
         {
@@ -2265,7 +2317,7 @@ namespace MCoff
 
         public override void RenderDetails()
         {
-            WriteLine($"{SymbolType.Type2String(Name)}, {Size} byte(s)");
+            WriteLine($"'{SymbolType.Type2String(Name)}', {Size} byte(s)");
         }
 
     }
@@ -2275,6 +2327,8 @@ namespace MCoff
         public override Storage_Class Storage => Storage_Class.C_USTATIC;
 
         public override RenderFlags RenderMask => RenderFlags.RDR_USTATIC;
+
+        public override byte NumAuxEntries => 0;
 
         public USTATIC_Symbol(ulong idx) : base(idx)
         {

@@ -1,8 +1,12 @@
-[Oo]bj
+﻿/.vs
 [Bb]in
-/.vs
+[Oo]bj
 *.csproj.user
 *.vcxproj.user
+*.wixproj.user
+*.opensdf
 *.sdf
 *.suo
 *.ubj
+*.VC.opendb
+*.VC.db
