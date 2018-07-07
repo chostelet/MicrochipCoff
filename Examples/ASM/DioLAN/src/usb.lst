@@ -1,0 +1,2556 @@
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00002 ;;  BootLoader.                                                             ;;
+                      00003 ;;  Copyright (C) 2007 Diolan ( http://www.diolan.com )                     ;;
+                      00004 ;;                                                                          ;;
+                      00005 ;;  This program is free software: you can redistribute it and/or modify    ;;
+                      00006 ;;  it under the terms of the GNU General Public License as published by    ;;
+                      00007 ;;  the Free Software Foundation, either version 3 of the License, or       ;;
+                      00008 ;;  (at your option) any later version.                                     ;;
+                      00009 ;;                                                                          ;;
+                      00010 ;;  This program is distributed in the hope that it will be useful,         ;;
+                      00011 ;;  but WITHOUT ANY WARRANTY; without even the implied warranty of          ;;
+                      00012 ;;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           ;;
+                      00013 ;;  GNU General Public License for more details.                            ;;
+                      00014 ;;                                                                          ;;
+                      00015 ;;  You should have received a copy of the GNU General Public License       ;;
+                      00016 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>    ;;
+                      00017 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00018 ; USB functions
+                      00019 ;-----------------------------------------------------------------------------
+                      00020         #include "P18F4455.INC"
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ;  $Id: P18F4455.INC,v 1.9 2006/10/25 17:47:56 nairnj Exp $
+                      00005 ;  MPASM PIC18F4455 processor include
+                      00006 ; 
+                      00007 ;  (c) Copyright 1999-2006 Microchip Technology, All rights reserved
+                      00008 ;==========================================================================
+                      00009 
+                      01621         LIST
+                      00021         #include "boot.inc"
+                      00001 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00002 ;;  BootLoader.                                                             ;;
+                      00003 ;;  Copyright (C) 2007 Diolan ( http://www.diolan.com )                     ;;
+                      00004 ;;                                                                          ;;
+                      00005 ;;  This program is free software: you can redistribute it and/or modify    ;;
+                      00006 ;;  it under the terms of the GNU General Public License as published by    ;;
+                      00007 ;;  the Free Software Foundation, either version 3 of the License, or       ;;
+                      00008 ;;  (at your option) any later version.                                     ;;
+                      00009 ;;                                                                          ;;
+                      00010 ;;  This program is distributed in the hope that it will be useful,         ;;
+                      00011 ;;  but WITHOUT ANY WARRANTY; without even the implied warranty of          ;;
+                      00012 ;;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           ;;
+                      00013 ;;  GNU General Public License for more details.                            ;;
+                      00014 ;;                                                                          ;;
+                      00015 ;;  You should have received a copy of the GNU General Public License       ;;
+                      00016 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>    ;;
+                      00017 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00018 ; Main definitions
+                      00019 ;-----------------------------------------------------------------------------
+                      00020 ; Bootloader Version
+                      00021 #define FW_VER_MAJOR            0
+                      00022 #define FW_VER_MINOR            2
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00023 #define FW_VER_SUB_MINOR        2
+                      00024 #define FW_VER_CODE             ((FW_VER_MAJOR << 8) | (FW_VER_MINOR << 4) | (FW_VER_SUB_MINOR))
+                      00025 ;-----------------------------------------------------------------------------
+                      00026 ; Application FW RESET and INTERRUPT VECTORS
+                      00027 #define APP_RESET_VECTOR                0x000800
+                      00028 #define APP_HIGH_INTERRUPT_VECTOR       0x000808
+                      00029 #define APP_LOW_INTERRUPT_VECTOR        0x000818
+                      00030 ;-----------------------------------------------------------------------------
+                      00031 ; CPU Power & Speed
+                      00032 ; If CPU_5V_HS is 1 then CPU run from 48 MHz PLL clock. REQUIRE 5V Power Supply
+                      00033 ; If CPU_5V_HS is 0 then CPU run from 16 MHz OSC directly. Possible 3.3V Power Supply
+                      00034 #define CPU_5V_HS               1
+                      00035 ;-----------------------------------------------------------------------------
+                      00036 ; EEPROM Mark to run bootloader
+                      00037 #define USE_EEPROM_MARK         1       ; Enable EEPROM MARK. To disable = 0
+                      00038 #define EEPROM_MARK_ADDR        0x00    ; EEPROM Address for MARK
+                      00039 #define EEPROM_MARK             0x5A    ; MARK value
+                      00040 ;-----------------------------------------------------------------------------
+                      00041 ; EEPROM and ID encoding by XTEA support
+                      00042 #define ENCODE_EEPROM           0       ; Disable EEPROM encoding. To enable = 1
+                      00043 #define ENCODE_ID               0       ; Disable ID encoding. To enable = 1
+                      00044 ;-----------------------------------------------------------------------------
+                      00045 ; Debug messages over UART
+                      00046 #define UART_DEBUG      0
+                      00047 #if UART_DEBUG
+                      00048 UD_INIT macro
+                      00049         clrf    TXSTA
+                      00050         clrf    RCSTA
+                      00051         clrf    BAUDCON
+                      00052         bsf     TXSTA, BRGH
+                      00053         movlw   ((.48000000 / .16 / .115200) - 1)       ; .25 = 115200
+                      00054         movwf   SPBRG
+                      00055         bsf     RCSTA, SPEN
+                      00056         bsf     TXSTA, TXEN
+                      00057         endm
+                      00058 UD_TX   macro   BYTE
+                      00059         btfss   PIR1, TXIF
+                      00060         bra     $ - 2
+                      00061         movlw   BYTE
+                      00062         movwf   TXREG
+                      00063         bcf     PIR1, TXIF
+                      00064         endm
+                      00065 UD_TXB  macro   BYTE
+                      00066         btfss   PIR1, TXIF
+                      00067         bra     $ - 2
+                      00068         movf    BYTE, W
+                      00069         addlw   0x30
+                      00070         movwf   TXREG
+                      00071         bcf     PIR1, TXIF
+                      00072         endm
+                      00073 #else
+                      00074 UD_INIT macro
+                      00075         endm
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00076 UD_TX   macro   BYTE
+                      00077         endm
+                      00078 UD_TXB  macro   BYTE
+                      00079         endm
+                      00080 #endif ; UART_DEBUG
+                      00081 ;-----------------------------------------------------------------------------
+                      00022         #include "usb_defs.inc"
+                      00001 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00002 ;;  BootLoader.                                                             ;;
+                      00003 ;;  Copyright (C) 2007 Diolan ( http://www.diolan.com )                     ;;
+                      00004 ;;                                                                          ;;
+                      00005 ;;  This program is free software: you can redistribute it and/or modify    ;;
+                      00006 ;;  it under the terms of the GNU General Public License as published by    ;;
+                      00007 ;;  the Free Software Foundation, either version 3 of the License, or       ;;
+                      00008 ;;  (at your option) any later version.                                     ;;
+                      00009 ;;                                                                          ;;
+                      00010 ;;  This program is distributed in the hope that it will be useful,         ;;
+                      00011 ;;  but WITHOUT ANY WARRANTY; without even the implied warranty of          ;;
+                      00012 ;;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           ;;
+                      00013 ;;  GNU General Public License for more details.                            ;;
+                      00014 ;;                                                                          ;;
+                      00015 ;;  You should have received a copy of the GNU General Public License       ;;
+                      00016 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>    ;;
+                      00017 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00018 ;-----------------------------------------------------------------------------
+                      00019 ; UEPn Initialization Parameters
+                      00020 #define EP_CTRL         0x06    ; Cfg Control pipe for this ep
+                      00021 #define EP_OUT          0x0C    ; Cfg OUT only pipe for this ep
+                      00022 #define EP_IN           0x0A    ; Cfg IN only pipe for this ep
+                      00023 #define EP_OUT_IN       0x0E    ; Cfg both OUT & IN pipes for this ep
+                      00024 #define HSHK_EN         0x10    ; Enable handshake packet
+                      00025 
+                      00026 ; Buffer Descriptor Status Register Initialization Parameters
+                      00027 #define _BSTALL         0x04    ; Buffer Stall enable
+                      00028 #define _DTSEN          0x08    ; Data Toggle Synch enable
+                      00029 #define _INCDIS         0x10    ; Address increment disable
+                      00030 #define _KEN            0x20    ; SIE keeps buff descriptors enable
+                      00031 #define _DAT0           0x00    ; DATA0 packet expected next
+                      00032 #define _DAT1           0x40    ; DATA1 packet expected next
+                      00033 #define _DTSMASK        0x40    ; DTS Mask
+                      00034 #define _USIE           0x80    ; SIE owns buffer
+                      00035 #define _UCPU           0x00    ; CPU owns buffer
+                      00036 
+                      00037 ; USTAT checking constants
+                      00038 #define OUT             0
+                      00039 #define IN              1
+                      00040 #define EP00_OUT        ((0x00 << 3) | (OUT << 2))
+                      00041 #define EP00_IN         ((0x00 << 3) | (IN << 2))
+                      00042 
+                      00043 ; USB PID: Token Types - See chapter 8 in the USB specification
+                      00044 #define SETUP_TOKEN     0x34
+                      00045 #define OUT_TOKEN       0x04
+                      00046 #define IN_TOKEN        0x24
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00047 
+                      00048 #define EP0_BUFF_SIZE   .64     
+                      00049 
+                      00050 ; HID
+                      00051 #define HID_INTF_ID     0x00
+                      00052 #define HID_UEP         UEP1
+                      00053 #define HID_BD_OUT      ep1Bo
+                      00054 #define HID_OUT_EP_SIZE EP0_BUFF_SIZE
+                      00055 #define HID_BD_IN       ep1Bi
+                      00056 #define HID_IN_EP_SIZE  .64
+                      00057 
+                      00058 ; SETUP packet fields
+                      00059 
+                      00060 #define RQ_TYPE_MASK    (0x03 << 5)
+                      00061 #define STANDARD        (0x00 << 5)
+                      00062 #define CLASS           (0x01 << 5)
+                      00063 #define VENDOR          (0x02 << 5)
+                      00064 ; Recipient
+                      00065 #define RCPT_MASK       0x1F
+                      00066 #define RCPT_DEV        0
+                      00067 #define RCPT_INTF       1
+                      00068 #define RCPT_EP         2
+                      00069 #define RCPT_OTH        3
+                      00070 ; Standard Requests
+                      00071 #define GET_STATUS      .0
+                      00072 #define CLR_FEATURE     .1
+                      00073 #define SET_FEATURE     .3
+                      00074 #define SET_ADR         .5
+                      00075 #define GET_DSC         .6
+                      00076 #define SET_DSC         .7
+                      00077 #define GET_CFG         .8
+                      00078 #define SET_CFG         .9
+                      00079 #define GET_INTF        .10
+                      00080 #define SET_INTF        .11
+                      00081 #define SYNCH_FRAME     .12
+                      00082 
+                      00083 ; HID Class-Specific Requests
+                      00084 #define GET_REPORT      0x01
+                      00085 #define GET_IDLE        0x02
+                      00086 #define GET_PROTOCOL    0x03
+                      00087 #define SET_REPORT      0x09
+                      00088 #define SET_IDLE        0x0A
+                      00089 #define SET_PROTOCOL    0x0B
+                      00090 
+                      00091 ; Host-to-device,Device-to-host
+                      00092 #define HOST_TO_DEV     0
+                      00093 #define DEV_TO_HOST     1
+                      00094 ; DEVICE_REMOTE_WAKEUP,ENDPOINT_HALT
+                      00095 #define DEVICE_REMOTE_WAKEUP    0x01
+                      00096 #define ENDPOINT_HALT           0x00
+                      00097 ;-----------------------------------------------------------------------------
+                      00098 ; SETUP packet definitions
+                      00099 #define bmRequestType   0
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00100 #define bRequest        1
+                      00101 #define wValue          2
+                      00102 #define wIndex          4
+                      00103 #define wLength         6
+                      00104 
+                      00105 #define DataDir         7       ; Bit number - Transaction Direction: 0-OUT, 1-IN
+                      00106 
+                      00107 #define bDscIndex       2       ; For Configuration and String DSC Only
+                      00108 #define bDscType        3       ; Device,Configuration,String
+                      00109 #define wLangID         4       ; Language ID
+                      00110 
+                      00111 #define bDevADR         2       ; Device Address 0-127
+                      00112 #define bDevADRH        3       ; Must equal zero
+                      00113 
+                      00114 #define bCfgValue       2       ; Configuration Value 0-255
+                      00115 #define bCfgRSD         3       ; Must equal zero (Reserved)
+                      00116 
+                      00117 #define Recipient       0       ; Device,Interface,Endpoint,Other
+                      00118 
+                      00119 #define EPNum           5       ; Endpoint Number 0-15
+                      00120 #define EPDir           7       ; Bit number - Endpoint Direction: 0-OUT, 1-IN
+                      00121 
+                      00122 #define bAltID          2       ; Alternate Setting Value 0-255
+                      00123 #define bAltID_H        3       ; Must equal zero
+                      00124 #define bIntfID         4       ; Interface Number Value 0-255
+                      00125 #define bIntfID_H       5       ; Must equal zero
+                      00126 
+                      00127 #define bFeature        2       ; DEVICE_REMOTE_WAKEUP, ENDPOINT_HALT
+                      00128 ;-----------------------------------------------------------------------------
+                      00023         #include "usb_desc.inc"
+                      00001 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00002 ;;  BootLoader.                                                             ;;
+                      00003 ;;  Copyright (C) 2007 Diolan ( http://www.diolan.com )                     ;;
+                      00004 ;;                                                                          ;;
+                      00005 ;;  This program is free software: you can redistribute it and/or modify    ;;
+                      00006 ;;  it under the terms of the GNU General Public License as published by    ;;
+                      00007 ;;  the Free Software Foundation, either version 3 of the License, or       ;;
+                      00008 ;;  (at your option) any later version.                                     ;;
+                      00009 ;;                                                                          ;;
+                      00010 ;;  This program is distributed in the hope that it will be useful,         ;;
+                      00011 ;;  but WITHOUT ANY WARRANTY; without even the implied warranty of          ;;
+                      00012 ;;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           ;;
+                      00013 ;;  GNU General Public License for more details.                            ;;
+                      00014 ;;                                                                          ;;
+                      00015 ;;  You should have received a copy of the GNU General Public License       ;;
+                      00016 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>    ;;
+                      00017 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00018 ;-----------------------------------------------------------------------------
+                      00019 #define USE_PROD_STRING         0       ; 1 - Support for Product string descriptor
+                      00020 ;-----------------------------------------------------------------------------
+                      00021 #ifndef BOOTLOADER_VID
+                      00022 #define BOOTLOADER_VID  0x0000          ; MUST BE VALID Vendor ID
+                      00023 #endif
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00024 #ifndef BOOTLOADER_PID
+                      00025 #define BOOTLOADER_PID  0x0000          ; MUST BE VALID Product ID
+                      00026 #endif
+                      00027 
+                      00028 #define DSC_DEV                 0x01
+                      00029 #define DSC_CFG                 0x02
+                      00030 #define DSC_STR                 0x03
+                      00031 #define DSC_INTF                0x04
+                      00032 #define DSC_EP                  0x05
+                      00033 
+                      00034 #define _DEFAULT                0x01 << 7               ; Default Value (Bit 7 is set)
+                      00035 #define _SELF                   0x01 << 6               ; Self-powered (Supports if set)
+                      00036 #define _RWU                    0x01 << 5               ; Remote Wakeup (Supports if set)
+                      00037 
+                      00038 #define HID_INTF                0x03
+                      00039 #define NO_SUBCLASS             0x00
+                      00040 #define BOOT_INTF_SUBCLASS      0x01
+                      00041 
+                      00042 #define HID_PROTOCOL_NONE       0x00
+                      00043 #define HID_PROTOCOL_KEYBOAD    0x01
+                      00044 #define HID_PROTOCOL_MOUSE      0x02
+                      00045 
+                      00046 #define _EP01_OUT               0x01
+                      00047 #define _EP01_IN                0x81
+                      00048 
+                      00049 #define _CTRL                   0x00
+                      00050 #define _ISO                    0x01
+                      00051 #define _BULK                   0x02
+                      00052 #define _INT                    0x03
+                      00053 
+                      00054 #define DSC_HID                 0x21
+                      00055 #define DSC_RPT                 0x22
+                      00056 #define DSC_PHY                 0x23
+                      00057 
+                      00058 #define HID_NUM_OF_DSC          0x01
+                      00059 
+                      00060 #define HID_RPT01_SIZE          .23
+                      00061 
+                      00062 #define CFG_ATTRIBUTES          _DEFAULT
+                      00063 ;-----------------------------------------------------------------------------
+                      00064 ; Descriptor sizes
+                      00065 #define USB_DEV_DESC_SIZE       .18
+                      00066 #define USB_CFG_DESC_SIZE       .9
+                      00067 #define USB_IF_DESC_SIZE        .9
+                      00068 #define USB_HID_DESC_SIZE       .9
+                      00069 #define USB_EP_DESC_SIZE        .7
+                      00070 #define USB_CFG_TOTAL_SIZE      (USB_CFG_DESC_SIZE + USB_IF_DESC_SIZE + USB_HID_DESC_SIZE + USB_EP_DESC_
+                            SIZE)
+                      00071 #define USB_LANG_DESC_SIZE      .4
+                      00072 #define USB_MFG_DESC_SIZE       .22
+                      00073 #if USE_PROD_STRING
+                      00074 #define USB_PROD_DESC_SIZE      .22
+                      00075 #endif
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00076 #define USB_HID_RPT_SIZE        .23
+                      00077 ;-----------------------------------------------------------------------------
+                      00024         #include "usb.inc"
+                      00001 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00002 ;;  BootLoader.                                                             ;;
+                      00003 ;;  Copyright (C) 2007 Diolan ( http://www.diolan.com )                     ;;
+                      00004 ;;                                                                          ;;
+                      00005 ;;  This program is free software: you can redistribute it and/or modify    ;;
+                      00006 ;;  it under the terms of the GNU General Public License as published by    ;;
+                      00007 ;;  the Free Software Foundation, either version 3 of the License, or       ;;
+                      00008 ;;  (at your option) any later version.                                     ;;
+                      00009 ;;                                                                          ;;
+                      00010 ;;  This program is distributed in the hope that it will be useful,         ;;
+                      00011 ;;  but WITHOUT ANY WARRANTY; without even the implied warranty of          ;;
+                      00012 ;;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           ;;
+                      00013 ;;  GNU General Public License for more details.                            ;;
+                      00014 ;;                                                                          ;;
+                      00015 ;;  You should have received a copy of the GNU General Public License       ;;
+                      00016 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>    ;;
+                      00017 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00018 ;-----------------------------------------------------------------------------
+                      00019 ; State Machine Variables
+                      00020 ;   State Machine State
+                      00021 #define USB_SM_DETACHED         0
+                      00022 #define USB_SM_ATTACHED         1
+                      00023 #define USB_SM_POWERED          2
+                      00024 #define USB_SM_DEFAULT          3
+                      00025 #define USB_SM_ADR_PENDING      4
+                      00026 #define USB_SM_ADDRESS          5
+                      00027 #define USB_SM_CONFIGURED       6
+                      00028 ;   State Machine Control I/F state
+                      00029 #define USB_SM_CTRL_WAIT_SETUP  0
+                      00030 #define USB_SM_CTRL_TRF_TX      1
+                      00031 #define USB_SM_CTRL_TRF_RX      2
+                      00032 ;-----------------------------------------------------------------------------
+                      00033 ; Wrappers to manipulate BDTs
+                      00034 #define BDT_STAT(x)     (x + 0)
+                      00035 #define BDT_CNT(x)      (x + 1)
+                      00036 #define BDT_ADRL(x)     (x + 2)
+                      00037 #define BDT_ADRH(x)     (x + 3)
+                      00038 ;-----------------------------------------------------------------------------
+                      00039 ; BDT_STAT bits
+                      00040 #define BC8     0
+                      00041 #define BC9     1
+                      00042 #define BSTALL  2       ; Buffer Stall Enable
+                      00043 #define DTSEN   3       ; Data Toggle Synch Enable
+                      00044 #define INCDIS  4       ; Address Increment Disable
+                      00045 #define KEN     5       ; BD Keep Enable
+                      00046 #define DTS     6       ; Data Toggle Synch Value
+                      00047 #define UOWN    7       ; USB Ownership
+                      00048 #define PID0    2       ; Packet Identifier Bits
+                      00049 #define PID1    3
+                      00050 #define PID2    4
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00051 #define PID3    5
+                      00052 ;-----------------------------------------------------------------------------
+                      00053 ; Data location flag
+                      00054 #define _RAM    0       ; In ASM this interpretted as bit number
+                      00055 #define _ROM    1       
+                      00056 ;-----------------------------------------------------------------------------
+                      00057 #define MUID_NULL       0
+                      00058 #define MUID_USB9       1
+                      00059 #define MUID_HID        2
+                      00060 #define MUID_CDC        3
+                      00061 ;-----------------------------------------------------------------------------
+                      00025 ;-----------------------------------------------------------------------------
+                      00026 ; Global variables
+                      00027 BOOT_DATA       UDATA
+  0000                00028         global  usb_sm_state
+  0000                00029         global  usb_sm_ctrl_state
+  0000                00030         global  usb_active_cfg
+  0000                00031         global  usb_alt_intf
+  0000                00032         global  Count
+  0000                00033         global  pDst
+  0000                00034         global  pSrc
+  0000                00035         global  ctrl_trf_mem
+  0000                00036         global  ctrl_trf_session_owner
+  0000                00037         global  SetupPktCopy
+000000                00038 tmpw                    res     2
+000002                00039 usb_sm_state            res     1
+000003                00040 usb_sm_ctrl_state       res     1
+000004                00041 usb_active_cfg          res     1
+000005                00042 usb_alt_intf            res     1
+000006                00043 Count                   res     1       ; Data counter
+000007                00044 pDst                    res     2       ; Data destination pointer
+000009                00045 pSrc                    res     4       ; Data source pointer
+00000D                00046 ctrl_trf_mem            res     1
+00000E                00047 ctrl_trf_session_owner  res     1
+00000F                00048 SetupPktCopy            res     8
+                      00049 ;-----------------------------------------------------------------------------
+                      00050 ; Local variables
+000017                00051 byte_to_read            res     1
+000018                00052 byte_to_send            res     1
+                      00053 ;-----------------------------------------------------------------------------
+                      00054 ; USB Fixed Location Variables
+                      00055 ; BDT
+                      00056 USB_BDT         UDATA   0x400
+  0000                00057         global  ep0Bo
+  0000                00058         global  ep0Bi
+  0000                00059         global  ep1Bo
+  0000                00060         global  ep1Bi
+  0000                00061         global  SetupPkt
+  0000                00062         global  CtrlTrfData
+000400                00063 ep0Bo   res     4       ; Endpoint0 BD Out
+000404                00064 ep0Bi   res     4       ; Endpoint0 BD In
+000408                00065 ep1Bo   res     4       ; Endpoint1 BD Out
+00040C                00066 ep1Bi   res     4       ; Endpoint1 BD In
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00067 ; Buffers for SETUP and IN packets
+000410                00068 SetupPkt        res     EP0_BUFF_SIZE   ; SETUP packet buffer
+000450                00069 CtrlTrfData     res     EP0_BUFF_SIZE   ; IN packet buffer
+                      00070 ;-----------------------------------------------------------------------------
+                      00071 BOOT_ASM_CODE   CODE
+  0000                00072         extern  USB_DEV_DESC
+  0000                00073         extern  USB_CFG_DESC
+  0000                00074         extern  USB_IF_DESC
+  0000                00075         extern  USB_HID_DESC
+  0000                00076         extern  USB_EP_DESC
+  0000                00077         extern  USB_LANG_DESC
+  0000                00078         extern  USB_MFG_DESC
+                      00079 #if USE_PROD_STRING
+                      00080         extern  USB_PROD_DESC
+                      00081 #endif
+  0000                00082         extern  usb_sm_HID_init_EP
+  0000                00083         extern  usb_sm_HID_request
+                      00084 ;-----------------------------------------------------------------------------
+                      00085 ; usb_init
+                      00086 ; DESCR : Initialize USB controller
+                      00087 ; INPUT : no
+                      00088 ; OUTPUT: no
+                      00089 ;-----------------------------------------------------------------------------
+  0000                00090         global  usb_init
+000000                00091 usb_init
+000000 0E14           00092         movlw   0x14            ; Enable Internal Pull-Up
+000002 6E6F           00093         movwf   UCFG            ; Enable Internal Transceiver
+                      00094                                 ; Full Speed
+                      00095                                 ; Disable ping-pong
+000004 6A69           00096         clrf    UIE
+000006 0E08           00097         movlw   0x08
+000008 6E6D           00098         movwf   UCON            ;UCON = 0b00001000;     ; Enable USBEN only
+                      00099         ; After enabling the USB module, it takes some time for the voltage
+                      00100         ; on the D+ or D- line to rise high enough to get out of the SE0 condition.
+                      00101         ; The USB Reset interrupt should not be unmasked until the SE0 condition is
+                      00102         ; cleared. This helps preventing the firmware from misinterpreting this
+                      00103         ; unique event as a USB bus reset from the USB host.
+                      00104         ; Wait USB module normal operation
+00000A BA6D           00105         btfsc   UCON, SE0
+00000C D???           00106         bra     $ - 2           ; while(UCONbits.SE0);
+                      00107         
+00000E 6A68           00108         clrf    UIR             ; Clear all USB interrupts
+000010 0E11           00109         movlw   0x11
+000012 6E69           00110         movwf   UIE             ; UIE = 0b00010001      ; Unmask RESET & IDLE interrupts only
+                      00111         
+000014 0E02           00112         movlw   USB_SM_POWERED
+000016 6E??           00113         movwf   usb_sm_state
+                      00114         
+000018 0012           00115         return
+                      00116 ;-----------------------------------------------------------------------------
+                      00117 ; usb_sm_reset
+                      00118 ; DESCR : Reset USB state machine
+                      00119 ; INPUT : no
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00120 ; OUTPUT: no
+                      00121 ;-----------------------------------------------------------------------------
+  0000                00122         global  usb_sm_reset
+00001A                00123 usb_sm_reset
+                      00124         UD_TX   'R'
+00001A 6A68           00125         clrf    UIR             ; Clears all USB interrupts
+00001C 0E7B           00126         movlw   0x7B
+00001E 6E69           00127         movwf   UIE             ; Enable all interrupts except ACTVIE
+000020 6A6E           00128         clrf    UADDR           ; Reset to default address
+000022 0E16           00129         movlw   EP_CTRL | HSHK_EN
+000024 6E70           00130         movwf   UEP0            ; Init EP0 as a Control EP
+                      00131         ; Flush any pending transactions
+000026                00132 usb_sm_reset_trnif
+000026 A668           00133         btfss   UIR, TRNIF
+000028 D???           00134         bra     usb_sm_reset_trnif_end
+00002A 9668           00135         bcf     UIR, TRNIF
+00002C D???           00136         bra     usb_sm_reset_trnif
+00002E                00137 usb_sm_reset_trnif_end
+00002E 986D           00138         bcf     UCON, PKTDIS    ; Make sure packet processing is enabled
+                      00139 
+000030 EC?? F???      00140         call    usb_sm_prepare_next_setup_trf
+000034 0E03           00141         movlw   USB_SM_DEFAULT
+000036 6E??           00142         movwf   usb_sm_state
+000038 0012           00143         return
+                      00144 ;-----------------------------------------------------------------------------
+                      00145 ; usb_sm_prepare_next_setup_trf
+                      00146 ; DESCR : Prepare EP0 for next setup transfer
+                      00147 ; INPUT : no
+                      00148 ; OUTPUT: no
+                      00149 ; Resources:
+                      00150 ;       FSR2:   BDTs manipulation
+                      00151 ;-----------------------------------------------------------------------------
+  0000                00152         global  usb_sm_prepare_next_setup_trf
+00003A                00153 usb_sm_prepare_next_setup_trf
+00003A 0E00           00154         movlw   USB_SM_CTRL_WAIT_SETUP
+00003C 6E??           00155         movwf   usb_sm_ctrl_state
+                      00156         ; BDT configuration
+00003E EE?? F0??      00157         lfsr    FSR2, ep0Bo
+                      00158         ; Buffer OUT configuration
+                      00159         ; BDT CNT
+000042 0E40           00160         movlw   EP0_BUFF_SIZE
+000044 6EDC           00161         movwf   PREINC2         ; BDT_CNT(ep0Bo)
+                      00162         ; BDT ADDR
+000046 0E??           00163         movlw   LOW(SetupPkt)
+000048 6EDC           00164         movwf   PREINC2         ; BDT_ADRL(ep0Bo)
+00004A 0E??           00165         movlw   HIGH(SetupPkt)
+00004C 6EDC           00166         movwf   PREINC2         ; BDT_ADRH(ep0Bo)
+                      00167         ; BDT STAT
+                      00168         ; Buffer OUT: SIE ownership, DATA0 Expected, Toggle Synch Enabled
+00004E E983           00169         subfsr  FSR2, 3
+000050 0E88           00170         movlw   (_USIE | _DAT0 | _DTSEN)
+000052 6EDF           00171         movwf   INDF2           ; BDT_STAT(ep0Bo)
+                      00172         ; Buffer IN configuration. Assume the ep0Bi in the same bank as ep0Bo
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00173         ; Buffer IN: CPU ownership
+000054 E884           00174         addfsr  FSR2, 4         ; movlb HIGH(ep0Bi)
+000056 0E00           00175         movlw   _UCPU
+000058 6EDF           00176         movwf   INDF2           ; BDT_STAT(ep0Bi)
+00005A 0012           00177         return
+                      00178 ;-----------------------------------------------------------------------------
+                      00179 ; usb_sm_ctrl
+                      00180 ; DESCR : Control Transfer over EP0
+                      00181 ; INPUT : no
+                      00182 ; OUTPUT: no
+                      00183 ; Resources:
+                      00184 ;       FSR1:   Packet processing
+                      00185 ;       FSR2:   BDTs manipulation
+                      00186 ;-----------------------------------------------------------------------------
+  0000                00187         global  usb_sm_ctrl
+00005C                00188 usb_sm_ctrl
+00005C 506C           00189         movf    USTAT, W
+00005E 0B78           00190         andlw   0x78
+000060 E1??           00191         bnz     usb_sm_ctrl_end ; Non EP0 transaction
+                      00192         ; Copy first 8 bytes of SETUP packet
+000062 EE?? F0??      00193         lfsr    FSR1, SetupPktCopy
+000066 EE?? F0??      00194         lfsr    FSR2, SetupPkt
+00006A 0E08           00195         movlw   8
+00006C                00196 usb_sm_ctrl_copy_pkt
+00006C CFDE FFE6      00197         movff   POSTINC2, POSTINC1
+000070 2EE8           00198         decfsz  WREG
+000072 D???           00199         bra     usb_sm_ctrl_copy_pkt
+000074                00200 usb_sm_ctrl_process
+000074 EE?? F0??      00201         lfsr    FSR2, BDT_STAT(ep0Bo)
+000078 0E00           00202         movlw   EP00_OUT
+00007A 626C           00203         cpfseq  USTAT
+00007C D???           00204         bra     usb_sm_ctrl_in_token
+00007E                00205 usb_sm_ctrl_out_setup
+00007E 50DF           00206         movf    INDF2, W        ; BDT_STAT(ep0Bo)
+000080 0B3C           00207         andlw   0x3C
+000082 0834           00208         sublw   SETUP_TOKEN
+000084 E1??           00209         bnz     usb_sm_ctrl_out_token
+000086                00210 usb_sm_ctrl_setup_token
+000086 D???           00211         rcall   usb_sm_ctrl_setup
+000088 0012           00212         return
+00008A                00213 usb_sm_ctrl_out_token
+00008A D???           00214         rcall   usb_sm_ctrl_out
+00008C 0012           00215         return
+00008E                00216 usb_sm_ctrl_in_token
+00008E 0E04           00217         movlw   EP00_IN
+000090 626C           00218         cpfseq  USTAT
+000092 0012           00219         return
+000094 D???           00220         rcall   usb_sm_ctrl_in
+000096                00221 usb_sm_ctrl_end
+000096 0012           00222         return
+                      00223 ;-----------------------------------------------------------------------------
+                      00224 ; usb_sm_ctrl_out
+                      00225 ; DESCR : EP0 OUT packet handler
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00226 ; INPUT : FSR2 point to BDnSTAT for EP0 OUT buffer
+                      00227 ; OUTPUT: no
+                      00228 ;-----------------------------------------------------------------------------
+  0000                00229         global  usb_sm_ctrl_out
+000098                00230 usb_sm_ctrl_out
+000098 0E02           00231         movlw   USB_SM_CTRL_TRF_RX
+00009A 62??           00232         cpfseq  usb_sm_ctrl_state
+00009C D???           00233         bra     usb_sm_ctrl_out_trf_rx_end
+00009E                00234 usb_sm_ctrl_out_trf_rx
+00009E D???           00235         rcall   usb_sm_ctrl_rx
+                      00236         ; Don't have to worry about overwriting _KEEP bit
+                      00237         ; because if _KEEP was set, TRNIF would not have been
+                      00238         ; generated in the first place.
+                      00239         ; FSR2 Pointed to BDT_STAT(ep0Bo)
+0000A0 0EC8           00240         movlw   (_USIE | _DAT1 | _DTSEN)
+0000A2 ACDF           00241         btfss   INDF2, DTS      ; BDT_STAT(ep0Bo)
+0000A4 0E88           00242         movlw   (_USIE | _DAT0 | _DTSEN)
+0000A6 6EDF           00243         movwf   INDF2           ; BDT_STAT(ep0Bo)
+0000A8 0012           00244         return
+0000AA                00245 usb_sm_ctrl_out_trf_rx_end
+                      00246         ; CTRL_TRF_TX
+0000AA D???           00247         rcall   usb_sm_prepare_next_setup_trf
+0000AC 0012           00248         return
+                      00249 ;-----------------------------------------------------------------------------
+                      00250 ; usb_sm_ctrl_in
+                      00251 ; DESCR : EP0 IN packet handler
+                      00252 ; INPUT : no
+                      00253 ; OUTPUT: no
+                      00254 ; Resources:
+                      00255 ;       FSR2:   BDTs manipulation
+                      00256 ;-----------------------------------------------------------------------------
+  0000                00257         global usb_sm_ctrl_in
+0000AE                00258 usb_sm_ctrl_in
+0000AE EE?? F0??      00259         lfsr    FSR2, BDT_STAT(ep0Bi)
+0000B2 BEDF           00260         btfsc   INDF2, UOWN     ; BDT_STAT(ep0Bi)
+0000B4 D???           00261         bra     $ - 2
+                      00262         ; Must check if in ADR_PENDING_STATE
+0000B6 0E04           00263         movlw   USB_SM_ADR_PENDING
+0000B8 62??           00264         cpfseq  usb_sm_state
+0000BA D???           00265         bra     usb_sm_ctrl_in_addr_end
+0000BC                00266 usb_sm_ctrl_in_addr
+                      00267         ; SetupPkt copyed to SetupPktCopy
+0000BC 50??           00268         movf    (SetupPktCopy + bDevADR), W
+0000BE 6E6E           00269         movwf   UADDR
+0000C0 0BFF           00270         andlw   0xFF
+0000C2 A4D8           00271         btfss   STATUS, Z
+0000C4 0E05           00272         movlw   USB_SM_ADDRESS
+0000C6 B4D8           00273         btfsc   STATUS, Z
+0000C8 0E03           00274         movlw   USB_SM_DEFAULT
+0000CA 6E??           00275         movwf   usb_sm_state
+0000CC                00276 usb_sm_ctrl_in_addr_end
+0000CC 0E01           00277         movlw   USB_SM_CTRL_TRF_TX
+0000CE 62??           00278         cpfseq  usb_sm_ctrl_state
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0000D0 D???           00279         bra     usb_sm_ctrl_in_tx_end
+0000D2                00280 usb_sm_ctrl_in_tx
+                      00281         ; FSR2 must be pointed to BDT_STAT(ep0Bi)
+0000D2 D???           00282         rcall   usb_sm_ctrl_tx
+                      00283         ; FSR2 must be pointed to BDT_STAT(ep0Bi)
+0000D4 0EC8           00284         movlw   (_USIE | _DAT1 | _DTSEN)
+0000D6 ACDF           00285         btfss   INDF2, DTS      ; BDT_STAT(ep0Bi)
+0000D8 0E88           00286         movlw   (_USIE | _DAT0 | _DTSEN)
+0000DA 6E??           00287         movwf   BDT_STAT(ep0Bi)
+0000DC 0012           00288         return
+0000DE                00289 usb_sm_ctrl_in_tx_end
+0000DE D???           00290         rcall   usb_sm_prepare_next_setup_trf
+0000E0 0012           00291         return
+                      00292 ;-----------------------------------------------------------------------------
+                      00293 ; usb_sm_ctrl_rx
+                      00294 ; DESCR : Read data from EP
+                      00295 ; INPUT : FSR2 point to BDnSTAT for EP0 OUT buffer
+                      00296 ; OUTPUT: no
+                      00297 ; Resources:
+                      00298 ;       FSR0:   Packet processing
+                      00299 ;       FSR1:   Packet processing
+                      00300 ;       FSR2:   BDTs manipulation
+                      00301 ;-----------------------------------------------------------------------------
+  0000                00302         global  usb_sm_ctrl_rx
+0000E2                00303 usb_sm_ctrl_rx
+                      00304         ; FSR2 Pointed to ep0Bo
+0000E2 50DC           00305         movf    PREINC2, W      ; BDT_CNT(ep0Bo)
+0000E4 6E??           00306         movwf   byte_to_read
+                      00307         ; Accumulate total number of bytes read
+0000E6 26??           00308         addwf   Count, F
+                      00309         ; pSrc.bRam = (byte*)&CtrlTrfData;
+                      00310         ; FSR1 = source address
+0000E8 EE?? F0??      00311         lfsr    FSR1, CtrlTrfData
+                      00312         ; FSR0 = destination address
+0000EC C??? FFEA      00313         movff   (pDst + 1), FSR0H
+0000F0 C??? FFE9      00314         movff   pDst, FSR0L
+0000F4                00315 usb_sm_ctrl_rx_read
+0000F4 CFE6 FFEE      00316         movff   POSTINC1, POSTINC0
+0000F8 2E??           00317         decfsz  byte_to_read
+0000FA D???           00318         bra     usb_sm_ctrl_rx_read
+0000FC CFE9 F???      00319         movff   FSR0L, pDst
+000100 CFEA F???      00320         movff   FSR0H, (pDst + 1)
+000104                00321 usb_sm_ctrl_rx_read_end
+000104 0012           00322         return
+                      00323 ;-----------------------------------------------------------------------------
+                      00324 ; usb_sm_ctrl_tx
+                      00325 ; DESCR : Write data to EP
+                      00326 ; INPUT : FSR2 point to BDnSTAT for EP0 IN buffer
+                      00327 ; OUTPUT: no
+                      00328 ; Resources:
+                      00329 ;       FSR0:   Packet processing
+                      00330 ;       FSR1:   Packet processing
+                      00331 ;       FSR2:   BDTs manipulation _MUST_ be pointed to BDT_STAT(ep0Bi)
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00332 ;-----------------------------------------------------------------------------
+  0000                00333         global  usb_sm_ctrl_tx
+000106                00334 usb_sm_ctrl_tx
+                      00335         ; FSR2 pointed to BDT_STAT(ep0Bi)
+                      00336         ; First, have to figure out how many byte of data to send
+000106 0E40           00337         movlw   EP0_BUFF_SIZE
+000108 60??           00338         cpfslt  Count
+00010A D???           00339         bra     usb_sm_ctrl_tx_size_end
+00010C 50??           00340         movf    Count, W
+00010E                00341 usb_sm_ctrl_tx_size_end
+00010E 6E??           00342         movwf   byte_to_send
+                      00343         ; Load the number of bytes to send to BC9..0 in buffer descriptor
+000110 92DF           00344         bcf     INDF2, BC9      ; BDT_STAT(ep0Bi)
+000112 90DF           00345         bcf     INDF2, BC8      ; BDT_STAT(ep0Bi)
+000114 6EDC           00346         movwf   PREINC2         ; BDT_CNT(ep0Bi): WREG = byte_to_send
+                      00347         ; Subtract the number of bytes just about to be sent from the total
+000116 5E??           00348         subwf   Count, F
+                      00349 
+                      00350         ; FSR0 = destination address
+000118 EE?? F0??      00351         lfsr    FSR0, CtrlTrfData
+                      00352 ;    pDst.bRam = (byte*)&CtrlTrfData;
+                      00353         ; Determine type of memory source
+00011C B0??           00354         btfsc   ctrl_trf_mem, _RAM
+00011E D???           00355         bra     usb_sm_ctrl_tx_rom
+000120                00356 usb_sm_ctrl_tx_ram
+000120 50??           00357         movf    byte_to_send, W ; Z flag affected
+000122 E0??           00358         bz      usb_sm_ctrl_tx_end
+                      00359         ; FSR1 = source address
+000124 C??? FFE2      00360         movff   (pSrc + 1), FSR1H
+000128 C??? FFE1      00361         movff   pSrc, FSR1L
+00012C                00362 usb_sm_ctrl_tx_ram_write
+00012C CFE6 FFEE      00363         movff   POSTINC1, POSTINC0
+000130 2E??           00364         decfsz  byte_to_send, F
+000132 D???           00365         bra     usb_sm_ctrl_tx_ram_write
+000134 CFE1 F???      00366         movff   FSR1L, pSrc
+000138 CFE2 F???      00367         movff   FSR1H, (pSrc + 1)
+00013C D???           00368         bra     usb_sm_ctrl_tx_end
+00013E                00369 usb_sm_ctrl_tx_rom
+00013E 6AF8           00370         clrf    TBLPTRU ; Descroprors, HID reports and others located below 256 bytes boundary
+000140 6AF7           00371         clrf    TBLPTRH
+000142 50??           00372         movf    pSrc, W
+000144 6EF6           00373         movwf   TBLPTRL
+000146                00374 usb_sm_ctrl_tx_rom_write
+000146 0009           00375         tblrd*+
+000148 CFF5 FFEE      00376         movff   TABLAT, POSTINC0
+00014C 2E??           00377         decfsz  byte_to_send, F
+00014E D???           00378         bra     usb_sm_ctrl_tx_rom_write
+000150 CFF6 F???      00379         movff   TBLPTRL, pSrc
+                      00380 ;       movff   TBLPTRH, (pSrc + 1)
+000154                00381 usb_sm_ctrl_tx_end
+000154 0012           00382         return
+                      00383 ;-----------------------------------------------------------------------------
+                      00384 ; usb_sm_ctrl_setup
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00385 ; DESCR : Write data to EP
+                      00386 ; INPUT : no
+                      00387 ; OUTPUT: no
+                      00388 ; Resources:
+                      00389 ;       FSR0:   SetupPacket processing
+                      00390 ;       FSR1:   CtrlTrfData processing
+                      00391 ;       FSR2:   BDT manipulations
+                      00392 ;-----------------------------------------------------------------------------
+  0000                00393         global  usb_sm_ctrl_setup
+000156                00394 usb_sm_ctrl_setup
+                      00395         UD_TX   'S'
+                      00396         ; Stage 1
+000156 0E00           00397         movlw   USB_SM_CTRL_WAIT_SETUP
+000158 6E??           00398         movwf   usb_sm_ctrl_state
+00015A 6A??           00399         clrf    ctrl_trf_session_owner
+00015C 6A??           00400         clrf    Count
+                      00401         
+                      00402         ; Determine Request type
+00015E                00403 usb_sm_ctrl_setup_rqtype
+00015E 50??           00404         movf    SetupPktCopy, W
+000160 0B60           00405         andlw   RQ_TYPE_MASK
+000162 B4D8           00406         btfsc   STATUS,Z        ; STANDARD = x00xxxxx
+000164 D???           00407         bra     usb_sm_ctrl_setup_sdtrq
+000166 0820           00408         sublw   CLASS
+000168 B4D8           00409         btfsc   STATUS,Z        ; CLASS = x01xxxxx
+00016A D???           00410         bra     usb_sm_ctrl_setup_clsrq
+                      00411         ; No vendor requests
+                      00412         UD_TX   'V'
+00016C D???           00413         bra     usb_sm_ctrl_setup_stall_ep
+00016E                00414 usb_sm_ctrl_setup_rqtype_end
+                      00415 ;--------       Process STANDARD request
+00016E                00416 usb_sm_ctrl_setup_sdtrq
+                      00417         ; Determine Request
+00016E 50??           00418         movf    (SetupPktCopy + bRequest), W    ; Z flag affected
+000170 E0??           00419         bz      usb_sm_ctrl_setup_sdtrq_gets
+000172 4EE8           00420         dcfsnz  WREG            ; CLR_FEATURE = 1
+000174 D???           00421         bra     usb_sm_ctrl_setup_sdtrq_clrf
+000176 06E8           00422         decf    WREG            ; bRequest = 2 is reserved
+000178 4EE8           00423         dcfsnz  WREG            ;SET_FEATURE = 3
+00017A D???           00424         bra     usb_sm_ctrl_setup_sdtrq_setf
+00017C 06E8           00425         decf    WREG            ; bRequest = 4 is reserved
+00017E 4EE8           00426         dcfsnz  WREG            ;SET_ADR = 5
+000180 D???           00427         bra     usb_sm_ctrl_setup_sdtrq_seta
+000182 4EE8           00428         dcfsnz  WREG            ;GET_DSC = 6
+000184 D???           00429         bra     usb_sm_ctrl_setup_sdtrq_getd
+000186 4EE8           00430         dcfsnz  WREG            ;SET_DSC = 7
+000188 D???           00431         bra     usb_sm_ctrl_setup_sdtrq_setd
+00018A 4EE8           00432         dcfsnz  WREG            ;GET_CFG = 8
+00018C D???           00433         bra     usb_sm_ctrl_setup_sdtrq_getc
+00018E 4EE8           00434         dcfsnz  WREG            ;SET_CFG = 9
+000190 D???           00435         bra     usb_sm_ctrl_setup_sdtrq_setc
+000192 4EE8           00436         dcfsnz  WREG            ;GET_INTF = 10
+000194 D???           00437         bra     usb_sm_ctrl_setup_sdtrq_geti
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 16
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000196 4EE8           00438         dcfsnz  WREG            ;SET_INTF = 11
+000198 D???           00439         bra     usb_sm_ctrl_setup_sdtrq_seti
+00019A 4EE8           00440         dcfsnz  WREG            ;SYNCH_FRAME = 12
+00019C D???           00441         bra     usb_sm_ctrl_setup_sdtrq_sf
+                      00442         ; Unknown request
+                      00443         UD_TX('U')
+00019E D???           00444         bra     usb_sm_ctrl_setup_stall_ep
+                      00445 ;--------       GET_STATUS
+0001A0                00446 usb_sm_ctrl_setup_sdtrq_gets
+0001A0 EE?? F0??      00447         lfsr    FSR0, CtrlTrfData
+0001A4 6AEE           00448         clrf    POSTINC0
+0001A6 6AEE           00449         clrf    POSTINC0
+                      00450 ; Due to code size limits do not fully
+                      00451 ; process GET_STATUS. 
+                      00452 ; Simply return 0x0000 status - everything good
+                      00453 #define GET_STATUS_FULLY_SUPPORTED 0
+                      00454 #if GET_STATUS_FULLY_SUPPORTED
+                      00455 ;!!!!!!!!!!!!!!!!!!!!!!!!!!
+                      00456 ;!!!   NOT TESTED YET   !!!
+                      00457 ;!!!!!!!!!!!!!!!!!!!!!!!!!!
+                      00458         movf    SetupPktCopy, W
+                      00459         andlw   RCPT_MASK       ; RCPT_DEV = 0
+                      00460         bz      usb_sm_ctrl_setup_sdtrq_gets_end
+                      00461         dcfsnz  WREG    ; RCPT_INTF = 1
+                      00462         bra     usb_sm_ctrl_setup_sdtrq_gets_end
+                      00463         dcfsnz  WREG    ; RCPT_EP = 2
+                      00464         bra     usb_sm_ctrl_setup_sdtrq_gets_re
+                      00465         dcfsnz  WREG    ; RCPT_OTH = 3
+                      00466 usb_sm_ctrl_setup_sdtrq_gets_ro
+                      00467         bra     usb_sm_ctrl_setup_stall_ep
+                      00468 usb_sm_ctrl_setup_sdtrq_gets_re
+                      00469         movff   (SetupPktCopy + EPNum), byte_to_read    ; Save EPDir
+                      00470         ; pDst.bRam = (byte*) &ep0Bo + (SetupPkt.EPNum * 8) + (SetupPkt.EPDir * 4)
+                      00471         movlw   0
+                      00472         btfss   (SetupPktCopy + EPNum), EPDir
+                      00473         movlw   4
+                      00474         movwf   pDst    ; SetupPkt.EPDir * 4
+                      00475         clrf    (pDst + 1)
+                      00476         bcf     (SetupPktCopy + EPNum), EPDir
+                      00477         bcf     STATUS, C
+                      00478         rlcf    (SetupPktCopy + EPNum), F
+                      00479         rlcf    (SetupPktCopy + EPNum), F
+                      00480         rlcf    (SetupPktCopy + EPNum), W
+                      00481         iorwf   (SetupPktCopy + EPNum), F       ; SetupPkt.EPNum * 8
+                      00482         movlw   LOW(ep0Bo)
+                      00483         addwf   pDst, F
+                      00484         movlw   HIGH(ep0Bo)
+                      00485         btfss   STATUS, C
+                      00486         addlw   1
+                      00487         movwf   (pDst + 1)
+                      00488         ;
+                      00489         lfsr    FSR1, pDst
+                      00490         lfsr    FSR0, CtrlTrfData
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 17
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00491         movlw   1
+                      00492         btfsc   INDF1, BSTALL   ; Use BSTALL as a bit mask
+                      00493         movwf   INDF0           ; Set bit0 to indicate that EP Halted
+                      00494         movff   byte_to_read, (SetupPktCopy + EPNum)    ; Restore EPDir
+                      00495 #endif ; GET_STATUS_FULLY_SUPPORTED
+0001A8 0E??           00496         movlw   LOW(CtrlTrfData)
+0001AA 6E??           00497         movwf   pSrc
+0001AC 0E??           00498         movlw   HIGH(CtrlTrfData)
+0001AE 6E??           00499         movwf   (pSrc + 1)
+0001B0 0E??           00500         movlw   HIGH(Count)
+0001B2 0E02           00501         movlw   2
+0001B4 6E??           00502         movwf   Count
+0001B6 80??           00503         bsf     ctrl_trf_session_owner, 0
+0001B8                00504 usb_sm_ctrl_setup_sdtrq_gets_end
+0001B8 D???           00505         bra     usb_sm_ctrl_setup_sdtrq_end     
+                      00506 ;--------       CLR_FEATURE     SET_FEATURE
+0001BA                00507 usb_sm_ctrl_setup_sdtrq_clrf
+0001BA                00508 usb_sm_ctrl_setup_sdtrq_setf
+                      00509 ; Due to code size limits CLR/SET FEATURE 
+                      00510 ; not be supported
+                      00511 #define CLR_SET_FEATURE_SUPPORTED 0
+                      00512 #if CLR_SET_FEATURE_SUPPORTED
+                      00513 ;!!!!!!!!!!!!!!!!!!!!!!!!!!
+                      00514 ;!!!   NOT TESTED YET   !!!
+                      00515 ;!!!!!!!!!!!!!!!!!!!!!!!!!!
+                      00516         movlw   DEVICE_REMOTE_WAKEUP
+                      00517         cpfseq  (SetupPktCopy + bFeature)
+                      00518         bra     usb_sm_ctrl_setup_sdtrq_scf_wue
+                      00519         movf    (SetupPktCopy + Recipient), F
+                      00520         andlw   RCPT_MASK
+                      00521         sublw   RCPT_DEV
+                      00522         bnz     usb_sm_ctrl_setup_sdtrq_scf_wue
+                      00523         ; Bootloader does not support remote WakeUp
+                      00524         bsf     ctrl_trf_session_owner, 0
+                      00525 usb_sm_ctrl_setup_sdtrq_scf_wue
+                      00526         movlw   ENDPOINT_HALT
+                      00527         cpfseq  (SetupPktCopy + bFeature)
+                      00528         bra     usb_sm_ctrl_setup_sdtrq_scf_end
+                      00529         movf    (SetupPktCopy + Recipient), F
+                      00530         andlw   RCPT_MASK
+                      00531         sublw   RCPT_EP
+                      00532         bnz     usb_sm_ctrl_setup_sdtrq_scf_end
+                      00533         movf    (SetupPktCopy + EPNum), W
+                      00534         andlw   0x0F
+                      00535         bz      usb_sm_ctrl_setup_sdtrq_scf_end
+                      00536         movlb   HIGH(ctrl_trf_session_owner)
+                      00537         bsf     ctrl_trf_session_owner, 0
+                      00538         ; Must do address calculation here
+                      00539         movff   (SetupPktCopy + EPNum), byte_to_read    ; Save EPDir
+                      00540         ; pDst.bRam = (byte*) &ep0Bo + (SetupPkt.EPNum * 8) + (SetupPkt.EPDir * 4)
+                      00541         movlw   0
+                      00542         btfss   (SetupPktCopy + EPNum), EPDir
+                      00543         movlw   4
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 18
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00544         movwf   pDst    ; SetupPkt.EPDir * 4
+                      00545         clrf    (pDst + 1)
+                      00546         bcf     (SetupPktCopy + EPNum), EPDir
+                      00547         bcf     STATUS, C
+                      00548         rlcf    (SetupPktCopy + EPNum), F
+                      00549         rlcf    (SetupPktCopy + EPNum), F
+                      00550         rlcf    (SetupPktCopy + EPNum), W
+                      00551         iorwf   (SetupPktCopy + EPNum), F       ; SetupPkt.EPNum * 8
+                      00552         movlw   LOW(ep0Bo)
+                      00553         addwf   pDst, F
+                      00554         movlw   HIGH(ep0Bo)
+                      00555         btfss   STATUS, C
+                      00556         addlw   1
+                      00557         movwf   (pDst + 1)
+                      00558         ;
+                      00559         lfsr    FSR1, pDst
+                      00560         movlw   SET_FEATURE
+                      00561         cpfseq  (SetupPktCopy + bRequest)
+                      00562         bra     usb_sm_ctrl_setup_sdtrq_scf_c
+                      00563         movlw   (_USIE | _BSTALL)
+                      00564         movwf   INDF1
+                      00565         bra     usb_sm_ctrl_setup_sdtrq_scf_e
+                      00566 usb_sm_ctrl_setup_sdtrq_scf_c
+                      00567         ; Saved EPDir
+                      00568         movlw   _UCPU
+                      00569         btfss   byte_to_read, EPDir
+                      00570         movlw   (_USIE | _DAT0 | _DTSEN)
+                      00571         movwf   INDF1
+                      00572 usb_sm_ctrl_setup_sdtrq_scf_e
+                      00573         movff   byte_to_read, (SetupPktCopy + EPNum)    ; Restore EPDir
+                      00574 usb_sm_ctrl_setup_sdtrq_scf_end
+                      00575 #endif
+                      00576 ; CLR_SET_FEATURE_SUPPORTED
+0001BA                00577 usb_sm_ctrl_setup_sdtrq_clrf_end
+0001BA                00578 usb_sm_ctrl_setup_sdtrq_setf_end
+0001BA D???           00579         bra     usb_sm_ctrl_setup_sdtrq_end
+                      00580 ;--------       SET_ADR
+0001BC                00581 usb_sm_ctrl_setup_sdtrq_seta
+0001BC 80??           00582         bsf     ctrl_trf_session_owner, 0
+0001BE 0E04           00583         movlw   USB_SM_ADR_PENDING
+0001C0 6E??           00584         movwf   usb_sm_state
+0001C2 D???           00585         bra     usb_sm_ctrl_setup_sdtrq_end
+0001C4                00586 usb_sm_ctrl_setup_sdtrq_seta_end
+                      00587 ;--------       GET_DSC
+0001C4                00588 usb_sm_ctrl_setup_sdtrq_getd
+0001C4 80??           00589         bsf     ctrl_trf_session_owner, 0
+0001C6 50??           00590         movf    (SetupPktCopy + bDscType), W    ; Point to wValue high byte
+0001C8 4EE8           00591         dcfsnz  WREG            ; DSC_DEV = 0x01
+0001CA D???           00592         bra     usb_sm_ctrl_setup_dsc_dev
+0001CC 4EE8           00593         dcfsnz  WREG            ; DSC_CFG = 0x02
+0001CE D???           00594         bra     usb_sm_ctrl_setup_dsc_cfg
+0001D0 4EE8           00595         dcfsnz  WREG            ; DSC_STR = 0x03
+0001D2 D???           00596         bra     usb_sm_ctrl_setup_dsc_str
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 19
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0001D4 4EE8           00597         dcfsnz  WREG            ; DSC_INTF = 0x04
+0001D6 D???           00598         bra     usb_sm_ctrl_setup_dsc_if
+0001D8 4EE8           00599         dcfsnz  WREG            ; DSC_EP = 0x05
+0001DA D???           00600         bra     usb_sm_ctrl_setup_dsc_ep
+0001DC                00601 usb_sm_ctrl_setup_dsc_unknown
+                      00602         UD_TX('?')
+0001DC 6A??           00603         clrf    ctrl_trf_session_owner
+                      00604 ;       bra     usb_sm_ctrl_setup_stall_ep
+0001DE D???           00605         bra     usb_sm_ctrl_setup_sdtrq_end
+                      00606 ;--------       Get DSC_DEV descrptor address
+0001E0                00607 usb_sm_ctrl_setup_dsc_dev
+0001E0 0E??           00608         movlw   LOW(USB_DEV_DESC)
+0001E2 6E??           00609         movwf   pSrc
+0001E4 0E12           00610         movlw   USB_DEV_DESC_SIZE
+0001E6 D???           00611         bra     usb_sm_ctrl_setup_sdtrq_getd_end
+0001E8                00612 usb_sm_ctrl_setup_dsc_dev_end
+                      00613 ;--------       Get DSC_CFG descrptor address
+0001E8                00614 usb_sm_ctrl_setup_dsc_cfg
+0001E8 0E??           00615         movlw   LOW(USB_CFG_DESC)
+0001EA 6E??           00616         movwf   pSrc
+0001EC 0E22           00617         movlw   USB_CFG_TOTAL_SIZE
+0001EE D???           00618         bra     usb_sm_ctrl_setup_sdtrq_getd_end
+0001F0                00619 usb_sm_ctrl_setup_dsc_cfg_end
+                      00620 ;--------       Get DSC_STR descrptor address
+0001F0                00621 usb_sm_ctrl_setup_dsc_str
+                      00622         ; Get String Descriptor
+                      00623         ; Point to wValue low byte
+0001F0 50??           00624         movf    (SetupPktCopy + bDscIndex), W   ; String Descriptor Index, Z flag affected
+0001F2 E1??           00625         bnz     usb_sm_ctrl_setup_dsc_str_mfg
+0001F4                00626 usb_sm_ctrl_setup_dsc_str_lng
+0001F4 0E??           00627         movlw   LOW(USB_LANG_DESC)
+0001F6 6E??           00628         movwf   pSrc
+0001F8 0E04           00629         movlw   USB_LANG_DESC_SIZE
+0001FA D???           00630         bra     usb_sm_ctrl_setup_dsc_str_end
+0001FC                00631 usb_sm_ctrl_setup_dsc_str_mfg
+0001FC 0E??           00632         movlw   LOW(USB_MFG_DESC)
+0001FE 6E??           00633         movwf   pSrc
+000200 0E16           00634         movlw   USB_MFG_DESC_SIZE
+000202                00635 usb_sm_ctrl_setup_dsc_str_end
+000202 D???           00636         bra     usb_sm_ctrl_setup_sdtrq_getd_end
+                      00637 ;--------       Get DSC_INTF descrptor address
+000204                00638 usb_sm_ctrl_setup_dsc_if
+000204                00639 usb_sm_ctrl_setup_dsc_if_end
+000204 D???           00640         bra     usb_sm_ctrl_setup_dsc_unknown
+                      00641 ;--------       Get DSC_EP descrptor address
+000206                00642 usb_sm_ctrl_setup_dsc_ep
+000206                00643 usb_sm_ctrl_setup_dsc_ep_end
+000206 D???           00644         bra     usb_sm_ctrl_setup_dsc_unknown
+                      00645 ;--------------------------------------------
+000208                00646 usb_sm_ctrl_setup_sdtrq_getd_end
+000208 6E??           00647         movwf   Count
+00020A 80??           00648         bsf     ctrl_trf_mem, _RAM
+00020C D???           00649         bra     usb_sm_ctrl_setup_sdtrq_end
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 20
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00650 ;--------       SET_DSC
+00020E                00651 usb_sm_ctrl_setup_sdtrq_setd
+00020E                00652 usb_sm_ctrl_setup_sdtrq_setd_end
+00020E D???           00653         bra     usb_sm_ctrl_setup_sdtrq_end
+                      00654 ;--------       GET_CFG
+000210                00655 usb_sm_ctrl_setup_sdtrq_getc
+000210 80??           00656         bsf     ctrl_trf_session_owner, 0
+000212 0E??           00657         movlw   LOW(usb_active_cfg)
+000214 6E??           00658         movwf   pSrc
+000216 0E??           00659         movlw   HIGH(usb_active_cfg)
+000218 6E??           00660         movwf   (pSrc + 1)
+00021A 90??           00661         bcf     ctrl_trf_mem, _RAM
+00021C 0E01           00662         movlw   1
+00021E 6E??           00663         movwf   Count
+000220 D???           00664         bra     usb_sm_ctrl_setup_sdtrq_end
+000222                00665 usb_sm_ctrl_setup_sdtrq_getc_end
+                      00666 ;--------       SET_CFG
+000222                00667 usb_sm_ctrl_setup_sdtrq_setc
+000222 80??           00668         bsf     ctrl_trf_session_owner, 0
+000224 6A71           00669         clrf    UEP1    ; Disable EP1
+000226 50??           00670         movf    (SetupPktCopy + bCfgValue), W
+000228 6E??           00671         movwf   usb_active_cfg
+00022A 0BFF           00672         andlw   0xFF
+00022C E0??           00673         bz      usb_sm_ctrl_setup_sdtrq_setc_0
+00022E                00674 usb_sm_ctrl_setup_sdtrq_setc_x
+00022E 0E06           00675         movlw   USB_SM_CONFIGURED
+000230 6E??           00676         movwf   usb_sm_state
+                      00677         ; Modifiable Section
+000232 D???           00678         rcall   usb_sm_HID_init_EP
+000234 D???           00679         bra     usb_sm_ctrl_setup_sdtrq_setc_end
+000236                00680 usb_sm_ctrl_setup_sdtrq_setc_0                  
+000236 0E05           00681         movlw   USB_SM_ADDRESS
+000238 6E??           00682         movwf   usb_sm_state
+00023A                00683 usb_sm_ctrl_setup_sdtrq_setc_end
+00023A D???           00684         bra     usb_sm_ctrl_setup_sdtrq_end
+                      00685 ;--------       GET_INTF
+00023C                00686 usb_sm_ctrl_setup_sdtrq_geti
+00023C 80??           00687         bsf     ctrl_trf_session_owner, 0
+00023E 0E??           00688         movlw   LOW(usb_alt_intf)
+000240 6E??           00689         movwf   pSrc
+000242 0E??           00690         movlw   HIGH(usb_alt_intf)
+000244 6E??           00691         movwf   (pSrc + 1)
+000246 90??           00692         bcf     ctrl_trf_mem, _RAM
+000248 0E01           00693         movlw   1
+00024A 6E??           00694         movwf   Count
+00024C                00695 usb_sm_ctrl_setup_sdtrq_geti_end
+00024C D???           00696         bra     usb_sm_ctrl_setup_sdtrq_end
+                      00697 ;--------       SET_INTF
+00024E                00698 usb_sm_ctrl_setup_sdtrq_seti
+00024E 80??           00699         bsf     ctrl_trf_session_owner, 0
+000250 C??? F???      00700         movff   (SetupPktCopy + bAltID), usb_alt_intf
+000254                00701 usb_sm_ctrl_setup_sdtrq_seti_end
+000254 D???           00702         bra     usb_sm_ctrl_setup_sdtrq_end
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 21
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00703 ;--------       SYNCH_FRAME
+000256                00704 usb_sm_ctrl_setup_sdtrq_sf
+000256                00705 usb_sm_ctrl_setup_sdtrq_sf_end
+000256 D???           00706         bra     usb_sm_ctrl_setup_sdtrq_end
+                      00707 ;--------       End of STANDARD requests
+000258                00708 usb_sm_ctrl_setup_sdtrq_end
+000258 D???           00709         bra     usb_sm_ctrl_setup_end
+                      00710 ;--------       Process CLASS request
+00025A                00711 usb_sm_ctrl_setup_clsrq
+00025A D???           00712         rcall   usb_sm_HID_request
+00025C D???           00713         bra     usb_sm_ctrl_setup_end_run_c
+00025E                00714 usb_sm_ctrl_setup_clsrq_end
+                      00715         ; Send STALL
+00025E                00716 usb_sm_ctrl_setup_stall_ep
+00025E D???           00717         bra     usb_stall_ep0   ; Return to caller from usb_stall_ep0
+000260                00718 usb_sm_ctrl_setup_stall_ep_end
+                      00719         ; End of usb_sm_ctrl_setup
+000260                00720 usb_sm_ctrl_setup_end
+000260 B0??           00721         btfsc   ctrl_trf_session_owner, 0
+000262 D???           00722         bra     usb_sm_ctrl_setup_end_run_c
+000264 D???           00723         bra     usb_sm_ctrl_setup_clsrq
+000266                00724 usb_sm_ctrl_setup_end_run_c
+                      00725         ; PKTDIS bit is set when a Setup Transaction is received.
+                      00726         ; Clear to resume packet processing.
+000266 986D           00727         bcf     UCON, PKTDIS
+000268 B0??           00728         btfsc   ctrl_trf_session_owner, 0
+00026A D???           00729         bra     usb_sm_ctrl_setup_end_null
+                      00730         ; If no one knows how to service this request then stall.
+00026C D???           00731         bra     usb_stall_ep0   ; Return to caller from usb_stall_ep0
+00026E                00732 usb_sm_ctrl_setup_end_null
+00026E AE??           00733         btfss   SetupPktCopy, DataDir
+000270 D???           00734         bra     usb_sm_ctrl_setup_end_out
+000272                00735 usb_sm_ctrl_setup_end_in
+                      00736         ; DEV_TO_HOST
+000272 50??           00737         movf    (SetupPktCopy + wLength), W
+000274 60??           00738         cpfslt  Count   ; wLegth < Count
+000276 6E??           00739         movwf   Count   ; Yes Count = wLegth
+                      00740         ; FSR2 must be pointed to BDT_STAT(ep0Bi)
+000278 EE?? F0??      00741         lfsr    FSR2, BDT_STAT(ep0Bi)
+00027C D???           00742         rcall   usb_sm_ctrl_tx
+                      00743         ; Prepare OUT EP to respond to early termination
+                      00744         ;
+                      00745         ; Since the SETUP transaction requires the DTS bit to be
+                      00746         ; DAT0 while the zero length OUT status requires the DTS
+                      00747         ; bit to be DAT1, the DTS bit check by the hardware should
+                      00748         ; be disabled. This way the SIE could accept either of
+                      00749         ; the two transactions.
+00027E 0E01           00750         movlw   USB_SM_CTRL_TRF_TX
+000280 6E??           00751         movwf   usb_sm_ctrl_state
+000282 EE?? F0??      00752         lfsr    FSR2, BDT_ADRH(ep0Bo)
+000286 0E??           00753         movlw   HIGH(SetupPkt)
+000288 6EDD           00754         movwf   POSTDEC2                ; BDT_ADRH(ep0Bo)
+00028A 0E??           00755         movlw   LOW(SetupPkt)
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 22
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00028C 6EDD           00756         movwf   POSTDEC2                ; BDT_ADRL(ep0Bo)
+00028E 0E40           00757         movlw   EP0_BUFF_SIZE
+000290 6EDD           00758         movwf   POSTDEC2                ; BDT_CNT(ep0Bo)
+000292 0E80           00759         movlw   _USIE                   ; Note: DTSEN is 0!
+000294 6EDD           00760         movwf   POSTDEC2                ; BDT_STAT(ep0Bo)
+                      00761         ; Prepare IN EP to transfer data, Cnt should have
+                      00762         ; been initialized by responsible request owner.
+000296 EE?? F0??      00763         lfsr    FSR2, BDT_ADRH(ep0Bi)
+00029A 0E??           00764         movlw   HIGH(CtrlTrfData)
+00029C 6EDD           00765         movwf   POSTDEC2                ; BDT_ADRH(ep0Bi)
+00029E 0E??           00766         movlw   LOW(CtrlTrfData)
+0002A0 6EDD           00767         movwf   POSTDEC2                ; BDT_ADRL(ep0Bi)
+0002A2 E981           00768         subfsr  FSR2, 1
+0002A4 0EC8           00769         movlw   (_USIE | _DAT1 | _DTSEN)
+0002A6 6EDD           00770         movwf   POSTDEC2                ; BDT_STAT(ep0Bi)
+0002A8 D???           00771         bra     usb_sm_ctrl_setup_end_in_out
+0002AA                00772 usb_sm_ctrl_setup_end_out
+                      00773         ; HOST_TO_DEV
+0002AA 0E02           00774         movlw   USB_SM_CTRL_TRF_RX
+0002AC 6E??           00775         movwf   usb_sm_ctrl_state
+                      00776         ; Prepare IN EP to respond to early termination
+                      00777         ; This is the same as a Zero Length Packet Response
+                      00778         ; for control transfer without a data stage
+0002AE EE?? F0??      00779         lfsr    FSR2, BDT_CNT(ep0Bi)
+0002B2 6ADD           00780         clrf    POSTDEC2                ; BDT_CNT(ep0Bi)
+0002B4 0EC8           00781         movlw   (_USIE | _DAT1 | _DTSEN)
+0002B6 6EDD           00782         movwf   POSTDEC2                ; BDT_STAT(ep0Bi)
+                      00783         ; Now FSR2 point to ep0Bo ADRH
+                      00784         ; Prepare OUT EP to receive data.
+0002B8 0E??           00785         movlw   HIGH(CtrlTrfData)
+0002BA 6EDD           00786         movwf   POSTDEC2                ; BDT_ADRH(ep0Bo)
+0002BC 0E??           00787         movlw   LOW(CtrlTrfData)
+0002BE 6EDD           00788         movwf   POSTDEC2                ; BDT_ADRL(ep0Bo)
+0002C0 0E40           00789         movlw   EP0_BUFF_SIZE
+0002C2 6EDD           00790         movwf   POSTDEC2                ; BDT_CNT(ep0Bo)
+0002C4 0EC8           00791         movlw   (_USIE | _DAT1 | _DTSEN)
+0002C6 6EDD           00792         movwf   POSTDEC2                ; BDT_STAT(ep0Bo)
+0002C8                00793 usb_sm_ctrl_setup_end_in_out
+                      00794         ; End Stage 3
+0002C8 0012           00795         return
+                      00796 ;-----------------------------------------------------------------------------
+                      00797 ; usb_stall_ep0
+                      00798 ; DESCR : Set STALL for EP0
+                      00799 ; INPUT : no
+                      00800 ; OUTPUT: no
+                      00801 ; Resources:
+                      00802 ;       FSR2:   BDT manipulations
+                      00803 ;-----------------------------------------------------------------------------
+0002CA                00804 usb_stall_ep0
+                      00805         UD_TX   't'
+                      00806         ;bsf    UEP0, EPSTALL
+                      00807         ; Must also prepare EP0 to receive the next SETUP transaction.
+0002CA EE?? F0??      00808         lfsr    FSR2, BDT_ADRH(ep0Bo)
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 23
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0002CE 0E??           00809         movlw   HIGH(SetupPkt)
+0002D0 6EDD           00810         movwf   POSTDEC2                ; BDT_ADRH(ep0Bo)
+0002D2 0E??           00811         movlw   LOW(SetupPkt)
+0002D4 6EDD           00812         movwf   POSTDEC2                ; BDT_ADRL(ep0Bo)
+0002D6 0E40           00813         movlw   EP0_BUFF_SIZE
+0002D8 6EDD           00814         movwf   POSTDEC2                ; BDT_CNT(ep0Bo)
+0002DA 0E84           00815         movlw   (_USIE | _BSTALL)
+0002DC 6EDF           00816         movwf   INDF2           ; BDT_STAT(ep0Bo)
+0002DE E884           00817         addfsr  FSR2, 4
+0002E0 6EDF           00818         movwf   INDF2                   ; BDT_STAT(ep0Bi)
+0002E2 986D           00819         bcf     UCON, PKTDIS
+0002E4 0012           00820         return
+                      00821 ;-----------------------------------------------------------------------------
+                      00822         END
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 24
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+A                                 00000000
+ABDEN                             00000000
+ABDOVF                            00000007
+ACCESS                            00000000
+ACKDT                             00000005
+ACKEN                             00000004
+ACKSTAT                           00000006
+ACQT0                             00000003
+ACQT1                             00000004
+ACQT2                             00000005
+ACTVIE                            00000002
+ACTVIF                            00000002
+ADCON0                            00000FC2
+ADCON1                            00000FC1
+ADCON2                            00000FC0
+ADCS0                             00000000
+ADCS1                             00000001
+ADCS2                             00000002
+ADDEN                             00000003
+ADDR0                             00000000
+ADDR1                             00000001
+ADDR2                             00000002
+ADDR3                             00000003
+ADDR4                             00000004
+ADDR5                             00000005
+ADDR6                             00000006
+ADEN                              00000003
+ADFM                              00000007
+ADIE                              00000006
+ADIF                              00000006
+ADIP                              00000006
+ADON                              00000000
+ADRES                             00000FC3
+ADRESH                            00000FC4
+ADRESL                            00000FC3
+AN0                               00000000
+AN1                               00000001
+AN2                               00000002
+AN3                               00000003
+AN4                               00000005
+APP_HIGH_INTERRUPT_VECTOR         0x000808
+APP_LOW_INTERRUPT_VECTOR          0x000818
+APP_RESET_VECTOR                  0x000800
+BANKED                            00000001
+BAUDCON                           00000FB8
+BC8                               0
+BC9                               1
+BCLIE                             00000003
+BCLIF                             00000003
+BCLIP                             00000003
+BDT_ADRH                          (x + 3)
+BDT_ADRL                          (x + 2)
+BDT_CNT                           (x + 1)
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 25
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+BDT_STAT                          (x + 0)
+BF                                00000000
+BGST                              00000005
+BOOTLOADER_PID                    0x0000
+BOOTLOADER_VID                    0x0000
+BOOT_INTF_SUBCLASS                0x01
+BOR                               00000000
+BRG16                             00000003
+BRGH                              00000002
+BSR                               00000FE0
+BSTALL                            2
+BTOEE                             00000004
+BTOEF                             00000004
+BTSEE                             00000007
+BTSEF                             00000007
+C                                 00000000
+C1INV                             00000004
+C1OUT                             00000006
+C2INV                             00000005
+C2OUT                             00000007
+CCP1                              00000002
+CCP1AS                            00000FB6
+CCP1CON                           00000FBD
+CCP1DEL                           00000FB7
+CCP1IE                            00000002
+CCP1IF                            00000002
+CCP1IP                            00000002
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCP2CON                           00000FBA
+CCP2IE                            00000000
+CCP2IF                            00000000
+CCP2IP                            00000000
+CCP2M0                            00000000
+CCP2M1                            00000001
+CCP2M2                            00000002
+CCP2M3                            00000003
+CCPR1                             00000FBE
+CCPR1H                            00000FBF
+CCPR1L                            00000FBE
+CCPR2                             00000FBB
+CCPR2H                            00000FBC
+CCPR2L                            00000FBB
+CFGS                              00000006
+CFG_ATTRIBUTES                    _DEFAULT
+CHS0                              00000002
+CHS1                              00000003
+CHS2                              00000004
+CHS3                              00000005
+CIS                               00000003
+CK                                00000006
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 26
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+CK1SPP                            00000000
+CK2SPP                            00000001
+CKE                               00000006
+CKP                               00000004
+CLASS                             (0x01 << 5)
+CLK1EN                            00000004
+CLKCFG0                           00000006
+CLKCFG1                           00000007
+CLR_FEATURE                       .1
+CLR_SET_FEATURE_SUPPORTED         0
+CM0                               00000000
+CM1                               00000001
+CM2                               00000002
+CMCON                             00000FB4
+CMIE                              00000006
+CMIF                              00000006
+CMIP                              00000006
+CPU_5V_HS                         1
+CRC16EE                           00000002
+CRC16EF                           00000002
+CRC5EE                            00000001
+CRC5EF                            00000001
+CREN                              00000004
+CSEN                              00000005
+CSRC                              00000007
+CVR0                              00000000
+CVR1                              00000001
+CVR2                              00000002
+CVR3                              00000003
+CVRCON                            00000FB5
+CVREF                             00000004
+CVREN                             00000007
+CVROE                             00000006
+CVRR                              00000005
+CVRSS                             00000004
+Count                             00000006
+CtrlTrfData                       00000450
+D                                 00000005
+DATA_ADDRESS                      00000005
+DC                                00000001
+DC1B0                             00000004
+DC1B1                             00000005
+DC2B0                             00000004
+DC2B1                             00000005
+DDRA                              TRISA
+DDRB                              TRISB
+DDRC                              TRISC
+DDRD                              TRISD
+DDRE                              TRISE
+DEVICE_REMOTE_WAKEUP              0x01
+DEV_TO_HOST                       1
+DFN8EE                            00000003
+DFN8EF                            00000003
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 27
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+DIR                               00000002
+DONE                              00000001
+DSC_CFG                           0x02
+DSC_DEV                           0x01
+DSC_EP                            0x05
+DSC_HID                           0x21
+DSC_INTF                          0x04
+DSC_PHY                           0x23
+DSC_RPT                           0x22
+DSC_STR                           0x03
+DTS                               6
+DTSEN                             3
+D_A                               00000005
+DataDir                           7
+ECCP1AS                           00000FB6
+ECCP1CON                          00000FBD
+ECCP1DEL                          00000FB7
+ECCPAS0                           00000004
+ECCPAS1                           00000005
+ECCPAS2                           00000006
+ECCPASE                           00000007
+EEADR                             00000FA9
+EECON1                            00000FA6
+EECON2                            00000FA7
+EEDATA                            00000FA8
+EEIE                              00000004
+EEIF                              00000004
+EEIP                              00000004
+EEPGD                             00000007
+EEPROM_MARK                       0x5A
+EEPROM_MARK_ADDR                  0x00
+ENCODE_EEPROM                     0
+ENCODE_ID                         0
+ENDP0                             00000003
+ENDP1                             00000004
+ENDP2                             00000005
+ENDP3                             00000006
+ENDPOINT_HALT                     0x00
+EP00_IN                           ((0x00 << 3) | (IN << 2))
+EP00_OUT                          ((0x00 << 3) | (OUT << 2))
+EP0_BUFF_SIZE                     .64
+EPCONDIS                          00000003
+EPDir                             7
+EPHSHK                            00000004
+EPINEN                            00000001
+EPNum                             5
+EPOUTEN                           00000002
+EPSTALL                           00000000
+EP_CTRL                           0x06
+EP_IN                             0x0A
+EP_OUT                            0x0C
+EP_OUT_IN                         0x0E
+FAST                              00000001
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 28
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+FERR                              00000002
+FLTS                              00000002
+FREE                              00000004
+FRM0                              00000000
+FRM1                              00000001
+FRM10                             00000002
+FRM2                              00000002
+FRM3                              00000003
+FRM4                              00000004
+FRM5                              00000005
+FRM6                              00000006
+FRM7                              00000007
+FRM8                              00000000
+FRM9                              00000001
+FSEN                              00000002
+FSR0                              00000000
+FSR0H                             00000FEA
+FSR0L                             00000FE9
+FSR1                              00000001
+FSR1H                             00000FE2
+FSR1L                             00000FE1
+FSR2                              00000002
+FSR2H                             00000FDA
+FSR2L                             00000FD9
+FW_VER_CODE                       ((FW_VER_MAJOR << 8) | (FW_VER_MINOR << 4) | (FW_VER_SUB_MINOR))
+FW_VER_MAJOR                      0
+FW_VER_MINOR                      2
+FW_VER_SUB_MINOR                  2
+GCEN                              00000007
+GET_CFG                           .8
+GET_DSC                           .6
+GET_IDLE                          0x02
+GET_INTF                          .10
+GET_PROTOCOL                      0x03
+GET_REPORT                        0x01
+GET_STATUS                        .0
+GET_STATUS_FULLY_SUPPORTED        0
+GIE                               00000007
+GIEH                              00000007
+GIEL                              00000006
+GO                                00000001
+GO_DONE                           00000001
+HID_BD_IN                         ep1Bi
+HID_BD_OUT                        ep1Bo
+HID_INTF                          0x03
+HID_INTF_ID                       0x00
+HID_IN_EP_SIZE                    .64
+HID_NUM_OF_DSC                    0x01
+HID_OUT_EP_SIZE                   EP0_BUFF_SIZE
+HID_PROTOCOL_KEYBOAD              0x01
+HID_PROTOCOL_MOUSE                0x02
+HID_PROTOCOL_NONE                 0x00
+HID_RPT01_SIZE                    .23
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 29
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+HID_UEP                           UEP1
+HLVDCON                           00000FD2
+HLVDEN                            00000004
+HLVDIE                            00000002
+HLVDIF                            00000002
+HLVDIN                            00000005
+HLVDIP                            00000002
+HLVDL0                            00000000
+HLVDL1                            00000001
+HLVDL2                            00000002
+HLVDL3                            00000003
+HOST_TO_DEV                       0
+HSHK_EN                           0x10
+I2C_DAT                           00000005
+I2C_READ                          00000002
+I2C_START                         00000003
+I2C_STOP                          00000004
+IDLEIE                            00000004
+IDLEIF                            00000004
+IDLEN                             00000007
+IN                                1
+INCDIS                            4
+INDF0                             00000FEF
+INDF1                             00000FE7
+INDF2                             00000FDF
+INT0                              00000000
+INT0E                             00000004
+INT0F                             00000001
+INT0IE                            00000004
+INT0IF                            00000001
+INT1                              00000001
+INT1E                             00000003
+INT1F                             00000000
+INT1IE                            00000003
+INT1IF                            00000000
+INT1IP                            00000006
+INT1P                             00000006
+INT2                              00000002
+INT2E                             00000004
+INT2F                             00000001
+INT2IE                            00000004
+INT2IF                            00000001
+INT2IP                            00000007
+INT2P                             00000007
+INTCON                            00000FF2
+INTCON2                           00000FF1
+INTCON3                           00000FF0
+INTEDG0                           00000006
+INTEDG1                           00000005
+INTEDG2                           00000004
+INTSRC                            00000007
+IN_TOKEN                          0x24
+IOFS                              00000002
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 30
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+IPEN                              00000007
+IPR1                              00000F9F
+IPR2                              00000FA2
+IRCF0                             00000004
+IRCF1                             00000005
+IRCF2                             00000006
+IRVST                             00000005
+IVRST                             00000005
+KEN                               5
+LATA                              00000F89
+LATA0                             00000000
+LATA1                             00000001
+LATA2                             00000002
+LATA3                             00000003
+LATA4                             00000004
+LATA5                             00000005
+LATA6                             00000006
+LATB                              00000F8A
+LATB0                             00000000
+LATB1                             00000001
+LATB2                             00000002
+LATB3                             00000003
+LATB4                             00000004
+LATB5                             00000005
+LATB6                             00000006
+LATB7                             00000007
+LATC                              00000F8B
+LATC0                             00000000
+LATC1                             00000001
+LATC2                             00000002
+LATC6                             00000006
+LATC7                             00000007
+LATD                              00000F8C
+LATD0                             00000000
+LATD1                             00000001
+LATD2                             00000002
+LATD3                             00000003
+LATD4                             00000004
+LATD5                             00000005
+LATD6                             00000006
+LATD7                             00000007
+LATE                              00000F8D
+LATE0                             00000000
+LATE1                             00000001
+LATE2                             00000002
+LVDCON                            00000FD2
+LVDEN                             00000004
+LVDIE                             00000002
+LVDIF                             00000002
+LVDIN                             00000005
+LVDIP                             00000002
+LVDL0                             00000000
+LVDL1                             00000001
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 31
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+LVDL2                             00000002
+LVDL3                             00000003
+LVV0                              00000000
+LVV1                              00000001
+LVV2                              00000002
+LVV3                              00000003
+MUID_CDC                          3
+MUID_HID                          2
+MUID_NULL                         0
+MUID_USB9                         1
+N                                 00000004
+NOT_A                             00000005
+NOT_ADDRESS                       00000005
+NOT_BOR                           00000000
+NOT_DONE                          00000001
+NOT_IPEN                          00000007
+NOT_PD                            00000002
+NOT_POR                           00000001
+NOT_RBPU                          00000007
+NOT_RI                            00000004
+NOT_T1SYNC                        00000002
+NOT_T3SYNC                        00000002
+NOT_TO                            00000003
+NOT_W                             00000002
+NOT_WRITE                         00000002
+NO_SUBCLASS                       0x00
+OERR                              00000001
+OESPP                             00000002
+OSC2                              00000006
+OSCCON                            00000FD3
+OSCFIE                            00000007
+OSCFIF                            00000007
+OSCFIP                            00000007
+OSCTUNE                           00000F9B
+OSTS                              00000003
+OUT                               0
+OUT_TOKEN                         0x04
+OV                                00000003
+P                                 00000004
+P1A                               00000002
+P1M0                              00000006
+P1M1                              00000007
+PC                                00000FF9
+PCFG0                             00000000
+PCFG1                             00000001
+PCFG2                             00000002
+PCFG3                             00000003
+PCL                               00000FF9
+PCLATH                            00000FFA
+PCLATU                            00000FFB
+PD                                00000002
+PDC0                              00000000
+PDC1                              00000001
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 32
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+PDC2                              00000002
+PDC3                              00000003
+PDC4                              00000004
+PDC5                              00000005
+PDC6                              00000006
+PEIE                              00000006
+PEN                               00000002
+PGC                               00000006
+PGD                               00000007
+PGM                               00000005
+PID0                              2
+PID1                              3
+PID2                              4
+PID3                              5
+PIDEE                             00000000
+PIDEF                             00000000
+PIE1                              00000F9D
+PIE2                              00000FA0
+PIR1                              00000F9E
+PIR2                              00000FA1
+PKTDIS                            00000004
+PLUSW0                            00000FEB
+PLUSW1                            00000FE3
+PLUSW2                            00000FDB
+POR                               00000001
+PORTA                             00000F80
+PORTB                             00000F81
+PORTC                             00000F82
+PORTD                             00000F83
+PORTE                             00000F84
+POSTDEC0                          00000FED
+POSTDEC1                          00000FE5
+POSTDEC2                          00000FDD
+POSTINC0                          00000FEE
+POSTINC1                          00000FE6
+POSTINC2                          00000FDE
+PPB0                              00000000
+PPB1                              00000001
+PPBI                              00000001
+PPBRST                            00000006
+PR2                               00000FCB
+PREINC0                           00000FEC
+PREINC1                           00000FE4
+PREINC2                           00000FDC
+PROD                              00000FF3
+PRODH                             00000FF4
+PRODL                             00000FF3
+PRSEN                             00000007
+PSA                               00000003
+PSSAC0                            00000002
+PSSAC1                            00000003
+PSSBD0                            00000000
+PSSBD1                            00000001
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 33
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+R                                 00000002
+RA0                               00000000
+RA1                               00000001
+RA2                               00000002
+RA3                               00000003
+RA4                               00000004
+RA5                               00000005
+RA6                               00000006
+RB0                               00000000
+RB1                               00000001
+RB2                               00000002
+RB3                               00000003
+RB4                               00000004
+RB5                               00000005
+RB6                               00000006
+RB7                               00000007
+RBIE                              00000003
+RBIF                              00000000
+RBIP                              00000000
+RBPU                              00000007
+RC0                               00000000
+RC1                               00000001
+RC2                               00000002
+RC4                               00000004
+RC5                               00000005
+RC6                               00000006
+RC7                               00000007
+RCEN                              00000003
+RCIDL                             00000006
+RCIE                              00000005
+RCIF                              00000005
+RCIP                              00000005
+RCMT                              00000006
+RCON                              00000FD0
+RCPT_DEV                          0
+RCPT_EP                           2
+RCPT_INTF                         1
+RCPT_MASK                         0x1F
+RCPT_OTH                          3
+RCREG                             00000FAE
+RCSTA                             00000FAB
+RD                                00000000
+RD0                               00000000
+RD1                               00000001
+RD16                              00000007
+RD2                               00000002
+RD3                               00000003
+RD4                               00000004
+RD5                               00000005
+RD6                               00000006
+RD7                               00000007
+RDPU                              00000007
+RDSPP                             00000007
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 34
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RE0                               00000000
+RE1                               00000001
+RE2                               00000002
+RE3                               00000003
+READ_WRITE                        00000002
+RESUME                            00000002
+RI                                00000004
+RQ_TYPE_MASK                      (0x03 << 5)
+RSEN                              00000001
+RX                                00000007
+RX9                               00000006
+RX9D                              00000000
+R_W                               00000002
+Recipient                         0
+S                                 00000003
+SBOREN                            00000006
+SCKP                              00000004
+SCS0                              00000000
+SCS1                              00000001
+SE0                               00000005
+SEN                               00000000
+SENDB                             00000003
+SETUP_TOKEN                       0x34
+SET_ADR                           .5
+SET_CFG                           .9
+SET_DSC                           .7
+SET_FEATURE                       .3
+SET_IDLE                          0x0A
+SET_INTF                          .11
+SET_PROTOCOL                      0x0B
+SET_REPORT                        0x09
+SMP                               00000007
+SOFIE                             00000006
+SOFIF                             00000006
+SPBRG                             00000FAF
+SPBRGH                            00000FB0
+SPEN                              00000007
+SPP0                              00000000
+SPP1                              00000001
+SPP2                              00000002
+SPP3                              00000003
+SPP4                              00000004
+SPP5                              00000005
+SPP6                              00000006
+SPP7                              00000007
+SPPBUSY                           00000004
+SPPCFG                            00000F63
+SPPCON                            00000F65
+SPPDATA                           00000F62
+SPPEN                             00000000
+SPPEPS                            00000F64
+SPPIE                             00000007
+SPPIF                             00000007
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 35
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+SPPIP                             00000007
+SPPOWN                            00000001
+SREN                              00000005
+SSPADD                            00000FC8
+SSPBUF                            00000FC9
+SSPCON1                           00000FC6
+SSPCON2                           00000FC5
+SSPEN                             00000005
+SSPIE                             00000003
+SSPIF                             00000003
+SSPIP                             00000003
+SSPM0                             00000000
+SSPM1                             00000001
+SSPM2                             00000002
+SSPM3                             00000003
+SSPOV                             00000006
+SSPSTAT                           00000FC7
+STALLIE                           00000005
+STALLIF                           00000005
+STANDARD                          (0x00 << 5)
+STATUS                            00000FD8
+STKFUL                            00000007
+STKPTR                            00000FFC
+STKPTR0                           00000000
+STKPTR1                           00000001
+STKPTR2                           00000002
+STKPTR3                           00000003
+STKPTR4                           00000004
+STKUNF                            00000006
+SUSPND                            00000001
+SWDTE                             00000000
+SWDTEN                            00000000
+SYNC                              00000004
+SYNCH_FRAME                       .12
+SetupPkt                          00000410
+SetupPktCopy                      0000000F
+T08BIT                            00000006
+T0CKI                             00000004
+T0CON                             00000FD5
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0IP                              00000002
+T0PS0                             00000000
+T0PS1                             00000001
+T0PS2                             00000002
+T0SE                              00000004
+T13CKI                            00000000
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000FCD
+T1OSCEN                           00000003
+T1OSI                             00000001
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 36
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+T1OSO                             00000000
+T1RUN                             00000006
+T1SYNC                            00000002
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000FCA
+T2OUTPS0                          00000003
+T2OUTPS1                          00000004
+T2OUTPS2                          00000005
+T2OUTPS3                          00000006
+T3CCP1                            00000003
+T3CCP2                            00000006
+T3CKPS0                           00000004
+T3CKPS1                           00000005
+T3CON                             00000FB1
+T3NSYNC                           00000002
+T3SYNC                            00000002
+TABLAT                            00000FF5
+TBLPTR                            00000FF6
+TBLPTRH                           00000FF7
+TBLPTRL                           00000FF6
+TBLPTRU                           00000FF8
+TMR0H                             00000FD7
+TMR0IE                            00000005
+TMR0IF                            00000002
+TMR0IP                            00000002
+TMR0L                             00000FD6
+TMR0ON                            00000007
+TMR1CS                            00000001
+TMR1H                             00000FCF
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1IP                            00000000
+TMR1L                             00000FCE
+TMR1ON                            00000000
+TMR2                              00000FCC
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2IP                            00000001
+TMR2ON                            00000002
+TMR3CS                            00000001
+TMR3H                             00000FB3
+TMR3IE                            00000001
+TMR3IF                            00000001
+TMR3IP                            00000001
+TMR3L                             00000FB2
+TMR3ON                            00000000
+TO                                00000003
+TOS                               00000FFD
+TOSH                              00000FFE
+TOSL                              00000FFD
+TOSU                              00000FFF
+TRISA                             00000F92
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 37
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TRISA0                            00000000
+TRISA1                            00000001
+TRISA2                            00000002
+TRISA3                            00000003
+TRISA4                            00000004
+TRISA5                            00000005
+TRISA6                            00000006
+TRISB                             00000F93
+TRISB0                            00000000
+TRISB1                            00000001
+TRISB2                            00000002
+TRISB3                            00000003
+TRISB4                            00000004
+TRISB5                            00000005
+TRISB6                            00000006
+TRISB7                            00000007
+TRISC                             00000F94
+TRISC0                            00000000
+TRISC1                            00000001
+TRISC2                            00000002
+TRISC6                            00000006
+TRISC7                            00000007
+TRISD                             00000F95
+TRISD0                            00000000
+TRISD1                            00000001
+TRISD2                            00000002
+TRISD3                            00000003
+TRISD4                            00000004
+TRISD5                            00000005
+TRISD6                            00000006
+TRISD7                            00000007
+TRISE                             00000F96
+TRISE0                            00000000
+TRISE1                            00000001
+TRISE2                            00000002
+TRMT                              00000001
+TRNIE                             00000003
+TRNIF                             00000003
+TUN0                              00000000
+TUN1                              00000001
+TUN2                              00000002
+TUN3                              00000003
+TUN4                              00000004
+TX                                00000006
+TX9                               00000006
+TX9D                              00000000
+TXEN                              00000005
+TXIE                              00000004
+TXIF                              00000004
+TXIP                              00000004
+TXREG                             00000FAD
+TXSTA                             00000FAC
+UA                                00000001
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 38
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+UADDR                             00000F6E
+UART_DEBUG                        0
+UCFG                              00000F6F
+UCON                              00000F6D
+UD_INIT                           
+UD_TX                             
+UD_TXB                            
+UEIE                              00000F6B
+UEIR                              00000F6A
+UEP0                              00000F70
+UEP1                              00000F71
+UEP10                             00000F7A
+UEP11                             00000F7B
+UEP12                             00000F7C
+UEP13                             00000F7D
+UEP14                             00000F7E
+UEP15                             00000F7F
+UEP2                              00000F72
+UEP3                              00000F73
+UEP4                              00000F74
+UEP5                              00000F75
+UEP6                              00000F76
+UEP7                              00000F77
+UEP8                              00000F78
+UEP9                              00000F79
+UERRIE                            00000001
+UERRIF                            00000001
+UFRM                              00000F66
+UFRMH                             00000F67
+UFRML                             00000F66
+UIE                               00000F69
+UIR                               00000F68
+UOEMON                            00000006
+UOWN                              7
+UPUEN                             00000004
+URSTIE                            00000000
+URSTIF                            00000000
+USBEN                             00000003
+USBIE                             00000005
+USBIF                             00000005
+USBIP                             00000005
+USB_CFG_DESC                      00000000
+USB_CFG_DESC_SIZE                 .9
+USB_CFG_TOTAL_SIZE                (USB_CFG_DESC_SIZE + USB_IF_DESC_SIZE + USB_HID_DESC_SIZE + USB_EP_DESC_SIZE)
+USB_DEV_DESC                      00000000
+USB_DEV_DESC_SIZE                 .18
+USB_EP_DESC                       00000000
+USB_EP_DESC_SIZE                  .7
+USB_HID_DESC                      00000000
+USB_HID_DESC_SIZE                 .9
+USB_HID_RPT_SIZE                  .23
+USB_IF_DESC                       00000000
+USB_IF_DESC_SIZE                  .9
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 39
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+USB_LANG_DESC                     00000000
+USB_LANG_DESC_SIZE                .4
+USB_MFG_DESC                      00000000
+USB_MFG_DESC_SIZE                 .22
+USB_SM_ADDRESS                    5
+USB_SM_ADR_PENDING                4
+USB_SM_ATTACHED                   1
+USB_SM_CONFIGURED                 6
+USB_SM_CTRL_TRF_RX                2
+USB_SM_CTRL_TRF_TX                1
+USB_SM_CTRL_WAIT_SETUP            0
+USB_SM_DEFAULT                    3
+USB_SM_DETACHED                   0
+USB_SM_POWERED                    2
+USE_EEPROM_MARK                   1
+USE_PROD_STRING                   0
+USTAT                             00000F6C
+UTEYE                             00000007
+UTRDIS                            00000003
+VCFG0                             00000004
+VCFG1                             00000005
+VDIRMAG                           00000007
+VENDOR                            (0x02 << 5)
+VREFM                             00000002
+VREFP                             00000003
+W                                 00000000
+WCOL                              00000007
+WDTCON                            00000FD1
+WR                                00000001
+WREG                              00000FE8
+WREN                              00000002
+WRERR                             00000003
+WRSPP                             00000006
+WS0                               00000000
+WS1                               00000001
+WS2                               00000002
+WS3                               00000003
+WUE                               00000001
+Z                                 00000002
+_BOOT_ASM_CODE_000C               0000000C
+_BOOT_ASM_CODE_00B4               000000B4
+_BORV_0_2L                        000000E7
+_BORV_1_2L                        000000EF
+_BORV_2_2L                        000000F7
+_BORV_3_2L                        000000FF
+_BOR_OFF_2L                       000000F9
+_BOR_ON_2L                        000000FF
+_BOR_ON_ACTIVE_2L                 000000FD
+_BOR_SOFT_2L                      000000FB
+_BSTALL                           0x04
+_BULK                             0x02
+_CCP2MX_OFF_3H                    000000FE
+_CCP2MX_ON_3H                     000000FF
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 40
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_CONFIG1H                         00300001
+_CONFIG1L                         00300000
+_CONFIG2H                         00300003
+_CONFIG2L                         00300002
+_CONFIG3H                         00300005
+_CONFIG4L                         00300006
+_CONFIG5H                         00300009
+_CONFIG5L                         00300008
+_CONFIG6H                         0030000B
+_CONFIG6L                         0030000A
+_CONFIG7H                         0030000D
+_CONFIG7L                         0030000C
+_CP0_OFF_5L                       000000FF
+_CP0_ON_5L                        000000FE
+_CP1_OFF_5L                       000000FF
+_CP1_ON_5L                        000000FD
+_CP2_OFF_5L                       000000FF
+_CP2_ON_5L                        000000FB
+_CPB_OFF_5H                       000000FF
+_CPB_ON_5H                        000000BF
+_CPD_OFF_5H                       000000FF
+_CPD_ON_5H                        0000007F
+_CPUDIV_OSC1_PLL2_1L              000000E7
+_CPUDIV_OSC2_PLL3_1L              000000EF
+_CPUDIV_OSC3_PLL4_1L              000000F7
+_CPUDIV_OSC4_PLL6_1L              000000FF
+_CTRL                             0x00
+_DAT0                             0x00
+_DAT1                             0x40
+_DEBUG_OFF_4L                     000000FF
+_DEBUG_ON_4L                      0000007F
+_DEFAULT                          0x01 << 7
+_DEVID1                           003FFFFE
+_DEVID2                           003FFFFF
+_DTSEN                            0x08
+_DTSMASK                          0x40
+_EBTR0_OFF_7L                     000000FF
+_EBTR0_ON_7L                      000000FE
+_EBTR1_OFF_7L                     000000FF
+_EBTR1_ON_7L                      000000FD
+_EBTR2_OFF_7L                     000000FF
+_EBTR2_ON_7L                      000000FB
+_EBTRB_OFF_7H                     000000FF
+_EBTRB_ON_7H                      000000BF
+_EP01_IN                          0x81
+_EP01_OUT                         0x01
+_FCMEN_OFF_1H                     000000BF
+_FCMEN_ON_1H                      000000FF
+_FOSC_ECIO_EC_1H                  000000F4
+_FOSC_ECPLLIO_EC_1H               000000F6
+_FOSC_ECPLL_EC_1H                 000000F7
+_FOSC_EC_EC_1H                    000000F5
+_FOSC_HSPLL_HS_1H                 000000FE
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 41
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_FOSC_HS_1H                       000000FC
+_FOSC_INTOSCIO_EC_1H              000000F8
+_FOSC_INTOSC_EC_1H                000000F9
+_FOSC_INTOSC_HS_1H                000000FB
+_FOSC_INTOSC_XT_1H                000000FA
+_FOSC_XTPLL_XT_1H                 000000F2
+_FOSC_XT_XT_1H                    000000F0
+_ICPRT_OFF_4L                     000000DF
+_ICPRT_ON_4L                      000000FF
+_IDLOC0                           00200000
+_IDLOC1                           00200001
+_IDLOC2                           00200002
+_IDLOC3                           00200003
+_IDLOC4                           00200004
+_IDLOC5                           00200005
+_IDLOC6                           00200006
+_IDLOC7                           00200007
+_IESO_OFF_1H                      0000007F
+_IESO_ON_1H                       000000FF
+_INCDIS                           0x10
+_INT                              0x03
+_ISO                              0x01
+_KEN                              0x20
+_LPT1OSC_OFF_3H                   000000FB
+_LPT1OSC_ON_3H                    000000FF
+_LVP_OFF_4L                       000000FB
+_LVP_ON_4L                        000000FF
+_MCLRE_OFF_3H                     0000007F
+_MCLRE_ON_3H                      000000FF
+_PBADEN_OFF_3H                    000000FD
+_PBADEN_ON_3H                     000000FF
+_PLLDIV_10_1L                     000000FE
+_PLLDIV_12_1L                     000000FF
+_PLLDIV_1_1L                      000000F8
+_PLLDIV_2_1L                      000000F9
+_PLLDIV_3_1L                      000000FA
+_PLLDIV_4_1L                      000000FB
+_PLLDIV_5_1L                      000000FC
+_PLLDIV_6_1L                      000000FD
+_PWRT_OFF_2L                      000000FF
+_PWRT_ON_2L                       000000FE
+_RAM                              0
+_ROM                              1
+_RWU                              0x01 << 5
+_SELF                             0x01 << 6
+_STVREN_OFF_4L                    000000FE
+_STVREN_ON_4L                     000000FF
+_UCPU                             0x00
+_USBDIV_1_1L                      000000DF
+_USBDIV_2_1L                      000000FF
+_USIE                             0x80
+_VREGEN_OFF_2L                    000000DF
+_VREGEN_ON_2L                     000000FF
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 42
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_WDTPS_1024_2H                    000000F5
+_WDTPS_128_2H                     000000EF
+_WDTPS_16384_2H                   000000FD
+_WDTPS_16_2H                      000000E9
+_WDTPS_1_2H                       000000E1
+_WDTPS_2048_2H                    000000F7
+_WDTPS_256_2H                     000000F1
+_WDTPS_2_2H                       000000E3
+_WDTPS_32768_2H                   000000FF
+_WDTPS_32_2H                      000000EB
+_WDTPS_4096_2H                    000000F9
+_WDTPS_4_2H                       000000E5
+_WDTPS_512_2H                     000000F3
+_WDTPS_64_2H                      000000ED
+_WDTPS_8192_2H                    000000FB
+_WDTPS_8_2H                       000000E7
+_WDT_OFF_2H                       000000FE
+_WDT_ON_2H                        000000FF
+_WRT0_OFF_6L                      000000FF
+_WRT0_ON_6L                       000000FE
+_WRT1_OFF_6L                      000000FF
+_WRT1_ON_6L                       000000FD
+_WRT2_OFF_6L                      000000FF
+_WRT2_ON_6L                       000000FB
+_WRTB_OFF_6H                      000000FF
+_WRTB_ON_6H                       000000BF
+_WRTC_OFF_6H                      000000FF
+_WRTC_ON_6H                       000000DF
+_WRTD_OFF_6H                      000000FF
+_WRTD_ON_6H                       0000007F
+_XINST_OFF_4L                     000000BF
+_XINST_ON_4L                      000000FF
+__18F4455                         00000001
+__DEBUG                           1
+bAltID                            2
+bAltID_H                          3
+bCfgRSD                           3
+bCfgValue                         2
+bDevADR                           2
+bDevADRH                          3
+bDscIndex                         2
+bDscType                          3
+bFeature                          2
+bIntfID                           4
+bIntfID_H                         5
+bRequest                          1
+bmRequestType                     0
+byte_to_read                      00000017
+byte_to_send                      00000018
+ctrl_trf_mem                      0000000D
+ctrl_trf_session_owner            0000000E
+ep0Bi                             00000404
+ep0Bo                             00000400
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 43
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ep1Bi                             0000040C
+ep1Bo                             00000408
+pDst                              00000007
+pSrc                              00000009
+tmpw                              00000000
+usb_active_cfg                    00000004
+usb_alt_intf                      00000005
+usb_init                          00000000
+usb_sm_HID_init_EP                00000000
+usb_sm_HID_request                00000000
+usb_sm_ctrl                       0000005C
+usb_sm_ctrl_copy_pkt              0000006C
+usb_sm_ctrl_end                   00000096
+usb_sm_ctrl_in                    000000AE
+usb_sm_ctrl_in_addr               000000BC
+usb_sm_ctrl_in_addr_end           000000CC
+usb_sm_ctrl_in_token              0000008E
+usb_sm_ctrl_in_tx                 000000D2
+usb_sm_ctrl_in_tx_end             000000DE
+usb_sm_ctrl_out                   00000098
+usb_sm_ctrl_out_setup             0000007E
+usb_sm_ctrl_out_token             0000008A
+usb_sm_ctrl_out_trf_rx            0000009E
+usb_sm_ctrl_out_trf_rx_end        000000AA
+usb_sm_ctrl_process               00000074
+usb_sm_ctrl_rx                    000000E2
+usb_sm_ctrl_rx_read               000000F4
+usb_sm_ctrl_rx_read_end           00000104
+usb_sm_ctrl_setup                 00000156
+usb_sm_ctrl_setup_clsrq           0000025A
+usb_sm_ctrl_setup_clsrq_end       0000025E
+usb_sm_ctrl_setup_dsc_cfg         000001E8
+usb_sm_ctrl_setup_dsc_cfg_end     000001F0
+usb_sm_ctrl_setup_dsc_dev         000001E0
+usb_sm_ctrl_setup_dsc_dev_end     000001E8
+usb_sm_ctrl_setup_dsc_ep          00000206
+usb_sm_ctrl_setup_dsc_ep_end      00000206
+usb_sm_ctrl_setup_dsc_if          00000204
+usb_sm_ctrl_setup_dsc_if_end      00000204
+usb_sm_ctrl_setup_dsc_str         000001F0
+usb_sm_ctrl_setup_dsc_str_end     00000202
+usb_sm_ctrl_setup_dsc_str_lng     000001F4
+usb_sm_ctrl_setup_dsc_str_mfg     000001FC
+usb_sm_ctrl_setup_dsc_unknown     000001DC
+usb_sm_ctrl_setup_end             00000260
+usb_sm_ctrl_setup_end_in          00000272
+usb_sm_ctrl_setup_end_in_out      000002C8
+usb_sm_ctrl_setup_end_null        0000026E
+usb_sm_ctrl_setup_end_out         000002AA
+usb_sm_ctrl_setup_end_run_c       00000266
+usb_sm_ctrl_setup_rqtype          0000015E
+usb_sm_ctrl_setup_rqtype_end      0000016E
+usb_sm_ctrl_setup_sdtrq           0000016E
+MPASM  5.51                           USB.ASM   7-7-2018  17:17:17         PAGE 44
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+usb_sm_ctrl_setup_sdtrq_clrf      000001BA
+usb_sm_ctrl_setup_sdtrq_clrf_end  000001BA
+usb_sm_ctrl_setup_sdtrq_end       00000258
+usb_sm_ctrl_setup_sdtrq_getc      00000210
+usb_sm_ctrl_setup_sdtrq_getc_end  00000222
+usb_sm_ctrl_setup_sdtrq_getd      000001C4
+usb_sm_ctrl_setup_sdtrq_getd_end  00000208
+usb_sm_ctrl_setup_sdtrq_geti      0000023C
+usb_sm_ctrl_setup_sdtrq_geti_end  0000024C
+usb_sm_ctrl_setup_sdtrq_gets      000001A0
+usb_sm_ctrl_setup_sdtrq_gets_end  000001B8
+usb_sm_ctrl_setup_sdtrq_seta      000001BC
+usb_sm_ctrl_setup_sdtrq_seta_end  000001C4
+usb_sm_ctrl_setup_sdtrq_setc      00000222
+usb_sm_ctrl_setup_sdtrq_setc_0    00000236
+usb_sm_ctrl_setup_sdtrq_setc_end  0000023A
+usb_sm_ctrl_setup_sdtrq_setc_x    0000022E
+usb_sm_ctrl_setup_sdtrq_setd      0000020E
+usb_sm_ctrl_setup_sdtrq_setd_end  0000020E
+usb_sm_ctrl_setup_sdtrq_setf      000001BA
+usb_sm_ctrl_setup_sdtrq_setf_end  000001BA
+usb_sm_ctrl_setup_sdtrq_seti      0000024E
+usb_sm_ctrl_setup_sdtrq_seti_end  00000254
+usb_sm_ctrl_setup_sdtrq_sf        00000256
+usb_sm_ctrl_setup_sdtrq_sf_end    00000256
+usb_sm_ctrl_setup_stall_ep        0000025E
+usb_sm_ctrl_setup_stall_ep_end    00000260
+usb_sm_ctrl_setup_token           00000086
+usb_sm_ctrl_state                 00000003
+usb_sm_ctrl_tx                    00000106
+usb_sm_ctrl_tx_end                00000154
+usb_sm_ctrl_tx_ram                00000120
+usb_sm_ctrl_tx_ram_write          0000012C
+usb_sm_ctrl_tx_rom                0000013E
+usb_sm_ctrl_tx_rom_write          00000146
+usb_sm_ctrl_tx_size_end           0000010E
+usb_sm_prepare_next_setup_trf     0000003A
+usb_sm_reset                      0000001A
+usb_sm_reset_trnif                00000026
+usb_sm_reset_trnif_end            0000002E
+usb_sm_state                      00000002
+usb_stall_ep0                     000002CA
+wIndex                            4
+wLangID                           4
+wLength                           6
+wValue                            2
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     0 reported,     0 suppressed
+
+

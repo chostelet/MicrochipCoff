@@ -1,0 +1,305 @@
+[Header]
+MagicCookie={0b13fe8c-dfe0-40eb-8900-6712719559a7}
+Version=1.0
+[File000]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\xtea.o
+Folder=Intermediary
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File001]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\xtea.err
+Folder=Intermediary
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File002]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\vectors.o
+Folder=Intermediary
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File003]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\vectors.err
+Folder=Intermediary
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File004]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\boot_asm.o
+Folder=Intermediary
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File005]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\boot_asm.err
+Folder=Intermediary
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File006]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\usb_desc.o
+Folder=Intermediary
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File007]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\usb_desc.err
+Folder=Intermediary
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File008]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\usb.o
+Folder=Intermediary
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File009]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\usb.err
+Folder=Intermediary
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File010]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\boot.o
+Folder=Intermediary
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File011]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\boot.err
+Folder=Intermediary
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File012]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\xtea.lst
+Folder=Output
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File013]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\vectors.lst
+Folder=Output
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File014]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\boot_asm.lst
+Folder=Output
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File015]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\usb_desc.lst
+Folder=Output
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File016]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\usb.lst
+Folder=Output
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File017]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\boot.lst
+Folder=Output
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File018]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\bootloader.cof
+Folder=Output
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={96C98149-AA1B-4CF9-B967-FAE79CAB663C}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\mplink.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=/m"$(BINDIR_)$(TARGETBASE).map" /o"$(BINDIR_)$(TARGETBASE).cof"
+TraceCmdString=
+DebugOptions=/z__MPLAB_DEBUG=1
+[File019]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\bootloader.hex
+Folder=Output
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={96C98149-AA1B-4CF9-B967-FAE79CAB663C}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\mplink.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=/m"$(BINDIR_)$(TARGETBASE).map" /o"$(BINDIR_)$(TARGETBASE).cof"
+TraceCmdString=
+DebugOptions=/z__MPLAB_DEBUG=1
+[File020]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\bootloader.cod
+Folder=Output
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={96C98149-AA1B-4CF9-B967-FAE79CAB663C}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\mplink.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=/m"$(BINDIR_)$(TARGETBASE).map" /o"$(BINDIR_)$(TARGETBASE).cof"
+TraceCmdString=
+DebugOptions=/z__MPLAB_DEBUG=1
+[File021]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\bootloader.lst
+Folder=Output
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={96C98149-AA1B-4CF9-B967-FAE79CAB663C}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\mplink.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=/m"$(BINDIR_)$(TARGETBASE).map" /o"$(BINDIR_)$(TARGETBASE).cof"
+TraceCmdString=
+DebugOptions=/z__MPLAB_DEBUG=1
+[File022]
+Location=L:\Software\Projects\Git\MicrochipCoff\Examples\ASM\DioLAN\src\bootloader.map
+Folder=Output
+DeviceName=PIC18F4455
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={96C98149-AA1B-4CF9-B967-FAE79CAB663C}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPASM Suite\mplink.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|xtea.asm|vectors.asm|boot_asm.asm|usb_desc.asm|usb.asm|boot.asm||<obj>||<lib>||<lkr>|bootloader.lkr||
+SuiteArgsString=extended-mode generate-relocatable-code
+ToolArgsString=/m"$(BINDIR_)$(TARGETBASE).map" /o"$(BINDIR_)$(TARGETBASE).cof"
+TraceCmdString=
+DebugOptions=/z__MPLAB_DEBUG=1
+[TOOL_LOC_STAMPS]
+tool_loc{49D3CA3F-D9A3-4518-9943-226A347E8CC7}=C:\Program Files (x86)\Microchip\MPASM Suite\MPASMWIN.exe
+tool_loc{96C98149-AA1B-4CF9-B967-FAE79CAB663C}=C:\Program Files (x86)\Microchip\MPASM Suite\mplink.exe

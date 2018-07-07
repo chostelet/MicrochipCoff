@@ -1,0 +1,958 @@
+COFF header:
+	Magic:		0x1240
+	Sections:	29
+	Dated:		Fri Jul 06 16:18:37 2018
+	Symptr:		0x1F60
+	Nsyms:		512
+	Opthdr:		18
+	Flags:		0x4002 Executable
+
+Optional header:
+	Magic:		0x0
+	Version:	50000
+	Processor:	0x1230
+	ROM width:	8
+	RAM width:	8
+
+Section 0: .tmpdata: @DD scnptr 0x0 relptr 0x0 lnnoptr 0x0 size 0x6 lines 0 relocs 0 flags 0x80 ( bss )
+Section 1: .udata_c018i_e.o: @D3 scnptr 0x0 relptr 0x0 lnnoptr 0x0 size 0xA lines 0 relocs 0 flags 0x80 ( bss )
+Section 2: .idata_c018i_e.o: @E3 scnptr 0x0 relptr 0x0 lnnoptr 0x0 size 0x0 lines 0 relocs 0 flags 0x40 ( data )
+Section 3: .idata_c018i_e.o_i: @300 scnptr 0x0 relptr 0x0 lnnoptr 0x0 size 0x0 lines 0 relocs 0 flags 0x100 ( romdata )
+Section 4: .romdata_c018i_e.o: @300 scnptr 0x0 relptr 0x0 lnnoptr 0x0 size 0x0 lines 0 relocs 0 flags 0x100 ( romdata )
+Section 5: .code_c018i_e.o: @300 scnptr 0x0 relptr 0x0 lnnoptr 0x0 size 0x0 lines 0 relocs 0 flags 0x20 ( text )
+Section 6: _entry_scn: @0 scnptr 0x4AE relptr 0x0 lnnoptr 0x7B0 size 0x6 lines 3 relocs 0 flags 0x1020 ( absolute, text )
+Section 7: _startup_scn: @2DC scnptr 0x4B4 relptr 0x0 lnnoptr 0x7E0 size 0x1A lines 13 relocs 0 flags 0x20 ( text )
+Section 8: _cinit_scn: @1A6 scnptr 0x4CE relptr 0x0 lnnoptr 0x8B0 size 0x9E lines 79 relocs 0 flags 0x20 ( text )
+Section 9: .udata_main.o: @C0 scnptr 0x0 relptr 0x0 lnnoptr 0x0 size 0x13 lines 0 relocs 0 flags 0x80 ( bss )
+Section 10: .idata_main.o: @E3 scnptr 0x0 relptr 0x0 lnnoptr 0x0 size 0x0 lines 0 relocs 0 flags 0x40 ( data )
+Section 11: .idata_main.o_i: @300 scnptr 0x0 relptr 0x0 lnnoptr 0x0 size 0x0 lines 0 relocs 0 flags 0x100 ( romdata )
+Section 12: .romdata_main.o: @300 scnptr 0x0 relptr 0x0 lnnoptr 0x0 size 0x0 lines 0 relocs 0 flags 0x100 ( romdata )
+Section 13: .code_main.o: @E scnptr 0x56C relptr 0x0 lnnoptr 0xDA0 size 0x198 lines 204 relocs 0 flags 0x20 ( text )
+Section 14: InterruptVectorHigh: @8 scnptr 0x704 relptr 0x0 lnnoptr 0x1A60 size 0x6 lines 3 relocs 0 flags 0x1020 ( absolute, text )
+Section 15: .stringtable: @2F6 scnptr 0x70A relptr 0x0 lnnoptr 0x0 size 0x8 lines 0 relocs 0 flags 0x100 ( romdata )
+Section 16: .config_300001_main.o: @300001 scnptr 0x712 relptr 0x0 lnnoptr 0x0 size 0x1 lines 0 relocs 0 flags 0x1100 ( absolute, romdata )
+Section 17: .config_300006_main.o: @300006 scnptr 0x713 relptr 0x0 lnnoptr 0x0 size 0x1 lines 0 relocs 0 flags 0x1100 ( absolute, romdata )
+Section 18: SFR_UNBANKED0: @F80 scnptr 0x0 relptr 0x0 lnnoptr 0x0 size 0x45 lines 0 relocs 0 flags 0x9080 ( access bank, absolute, bss )
+Section 19: SFR_UNBANKED1: @FCD scnptr 0x0 relptr 0x0 lnnoptr 0x0 size 0x33 lines 0 relocs 0 flags 0x9080 ( access bank, absolute, bss )
+Section 20: .code: @2BC scnptr 0x714 relptr 0x0 lnnoptr 0x1A90 size 0x20 lines 16 relocs 0 flags 0x20 ( text )
+Section 21: .udata___init.o: @E3 scnptr 0x0 relptr 0x0 lnnoptr 0x0 size 0x0 lines 0 relocs 0 flags 0x80 ( bss )
+Section 22: .idata___init.o: @E3 scnptr 0x0 relptr 0x0 lnnoptr 0x0 size 0x0 lines 0 relocs 0 flags 0x40 ( data )
+Section 23: .idata___init.o_i: @300 scnptr 0x0 relptr 0x0 lnnoptr 0x0 size 0x0 lines 0 relocs 0 flags 0x100 ( romdata )
+Section 24: .romdata___init.o: @300 scnptr 0x0 relptr 0x0 lnnoptr 0x0 size 0x0 lines 0 relocs 0 flags 0x100 ( romdata )
+Section 25: .code___init.o: @2FE scnptr 0x734 relptr 0x0 lnnoptr 0x1B90 size 0x2 lines 1 relocs 0 flags 0x20 ( text )
+Section 26: STRING: @244 scnptr 0x736 relptr 0x0 lnnoptr 0x1BA0 size 0x78 lines 60 relocs 0 flags 0x20 ( text )
+Section 27: .cinit: @6 scnptr 0x7AE relptr 0x0 lnnoptr 0x0 size 0x2 lines 0 relocs 0 flags 0x100 ( romdata )
+Section 28: .stack: @80 scnptr 0x0 relptr 0x0 lnnoptr 0x0 size 0x40 lines 0 relocs 0 flags 0x80 ( bss )
+
+String table: 2043 bytes, file offset 0x4760
+    4:	.code___init.o
+   19:	.code_c018i_e.o
+   35:	.code_main.o
+   48:	.config_300001_main.o
+   70:	.config_300006_main.o
+   92:	.idata___init.o
+  108:	.idata_c018i_e.o
+  125:	.idata_main.o
+  139:	.romdata___init.o
+  157:	.romdata_c018i_e.o
+  176:	.romdata_main.o
+  192:	.stringtable
+  205:	.tmpdata
+  214:	.udata___init.o
+  230:	.udata_c018i_e.o
+  247:	.udata_main.o
+  261:	ADCON0bits
+  272:	ADCON1bits
+  283:	ADCON2bits
+  294:	BAUDCONbits
+  306:	BAUDCTLbits
+  318:	C:\Program Files\Microchip\mplabc18\v3.46\mpasm\P18C452.INC
+  378:	C:\Program Files\Microchip\mplabc18\v3.46\mpasm\P18CXXX.INC
+  438:	C:\mcc18\h\p18cxxx.h
+  459:	C:\mcc18\h\p18f1230.h
+  481:	C:\mcc18\h\stddef.h
+  501:	C:\mcc18\h\string.h
+  521:	CMCONbits
+  531:	CVRCONbits
+  542:	DDRAbits
+  551:	DDRBbits
+  560:	DTCONbits
+  570:	E:\3.46\pic18-lt\cxx-framework\src\extended\proc\p18f1230.asm
+  632:	E:\3.46\pic18-lt\cxx-framework\src\extended\startup\c018i_e.c
+  694:	E:\3.46\pic18-lt\cxx-framework\src\extended\stdclib\P18MACRO.INC
+  759:	E:\3.46\pic18-lt\cxx-framework\src\extended\stdclib\__init.c
+  820:	E:\3.46\pic18-lt\cxx-framework\src\extended\stdclib\scmpr2p.asm
+  884:	E:\3.46\pic18-lt\cxx-framework\src\extended\stdclib\sncpyp2r.asm
+  949:	EECON1bits
+  960:	FLTCONFIG
+  970:	FLTCONFIGbits
+  984:	INTCON2bits
+  996:	INTCON3bits
+ 1008:	INTCONbits
+ 1019:	IPR1bits
+ 1028:	IPR2bits
+ 1037:	IPR3bits
+ 1046:	InterruptHandlerHigh
+ 1067:	InterruptVectorHigh
+ 1087:	L:\Software\Projects\Git\Examples\C18\PIC18Extd\src\main.c
+ 1146:	LATAbits
+ 1155:	LATBbits
+ 1164:	LVDCONbits
+ 1175:	OSCCONbits
+ 1186:	OSCTUNEbits
+ 1198:	OVDCONDbits
+ 1210:	OVDCONSbits
+ 1222:	PDC0Hbits
+ 1232:	PDC1Hbits
+ 1242:	PDC2Hbits
+ 1252:	PIE1bits
+ 1261:	PIE2bits
+ 1270:	PIE3bits
+ 1279:	PIR1bits
+ 1288:	PIR2bits
+ 1297:	PIR3bits
+ 1306:	PORTAbits
+ 1316:	PORTBbits
+ 1326:	POSTDEC0
+ 1335:	POSTDEC1
+ 1344:	POSTDEC2
+ 1353:	POSTINC0
+ 1362:	POSTINC1
+ 1371:	POSTINC2
+ 1380:	PTCON0bits
+ 1391:	PTCON1bits
+ 1402:	PTMRHbits
+ 1412:	PTPERHbits
+ 1423:	PWMCON0bits
+ 1435:	PWMCON1bits
+ 1447:	RCONbits
+ 1456:	RCSTAbits
+ 1466:	SEVTCMPH
+ 1475:	SEVTCMPHbits
+ 1488:	SEVTCMPL
+ 1497:	SFR_UNBANKED0
+ 1511:	SFR_UNBANKED1
+ 1525:	STATUSbits
+ 1536:	STKPTRbits
+ 1547:	T0CONbits
+ 1557:	T1CONbits
+ 1567:	TRISAbits
+ 1577:	TRISBbits
+ 1587:	TXSTAbits
+ 1597:	TimerFlags
+ 1608:	WDTCONbits
+ 1619:	_3jContinue
+ 1631:	___return_lbl00000
+ 1650:	___return_lbl00001
+ 1669:	___return_lbl00002
+ 1688:	___return_lbl00011
+ 1707:	__config_0
+ 1718:	__config_1
+ 1729:	__string_0
+ 1740:	__string_1
+ 1751:	__tag_129
+ 1761:	__zero_memory
+ 1775:	_cinit_scn
+ 1786:	_do_cinit
+ 1796:	_entry_scn
+ 1807:	_startup
+ 1816:	_startup_scn
+ 1829:	_timerBits
+ 1840:	compare_l
+ 1850:	copy_loop
+ 1860:	copy_one_byte
+ 1874:	curr_byte
+ 1884:	curr_entry
+ 1895:	data_ptr
+ 1904:	done_copying
+ 1917:	getFlags
+ 1926:	getstruct
+ 1936:	strcmpram2pgm
+ 1950:	strncpypgm2ram
+ 1965:	zero_block
+ 1976:	__MPLAB_BUILD
+ 1990:	.idata___init.o_i
+ 2008:	.idata_c018i_e.o_i
+ 2027:	.idata_main.o_i
+
+Symbol table:
+    0:	               file name 1 0[1]	E:\3.46\pic18-lt\cxx-framework\src\extended\startup\c018i_e.c [0]
+    2:	         external symbol 1 0[1]	_entry = 0: _entry_scn function [lineptr 548, endndx 0] returning void
+    4:	              .bf or .ef 1 0[1]	.bf = 0: _entry_scn: line 23, index 14
+    6:	              .bb or .eb 1 0[1]	.bb = 0: _entry_scn: line 24, index 9
+    8:	              .bb or .eb 1 0[1]	.eb = 0: _entry_scn: line 27, index 0
+   10:	              .bf or .ef 1 0[1]	.ef = 4: _entry_scn: line 27, index 0
+   12:	         external symbol 1 0[1]	_startup = 2DC: _startup_scn function [lineptr 578, endndx 0] returning void
+   14:	              .bf or .ef 1 0[1]	.bf = 2DC: _startup_scn: line 30, index 24
+   16:	              .bb or .eb 1 0[1]	.bb = 2DC: _startup_scn: line 31, index 19
+   18:	              .bb or .eb 1 0[1]	.eb = 2DC: _startup_scn: line 51, index 0
+   20:	              .bf or .ef 1 0[1]	.ef = 2F4: _startup_scn: line 51, index 0
+   22:	         external symbol 1 0[1]	_do_cinit = 1A6: _cinit_scn function [lineptr 648, endndx 0] returning void
+   24:	              .bf or .ef 1 0[1]	.bf = 1A6: _cinit_scn: line 70, index 0
+   26:	              .bb or .eb 1 0[1]	.bb = 1A6: _cinit_scn: line 71, index 33
+   28:	                  static 0 3[1]	prom = D3: .udata_c018i_e.o slong
+   29:	                  static 0 2[1]	curr_byte = D6: .udata_c018i_e.o ushort
+   30:	                  static 0 2[1]	curr_entry = D8: .udata_c018i_e.o ushort
+   31:	                  static 0 3[1]	data_ptr = DA: .udata_c018i_e.o slong
+   32:	              .bb or .eb 1 0[1]	.eb = 1A6: _cinit_scn: line 184, index 0
+   34:	              .bf or .ef 1 0[1]	.ef = 242: _cinit_scn: line 184, index 0
+   36:	             end of file 0 0[1]	.eof
+   37:	                   label 0 0[1]	___return_lbl00000 = 4: _entry_scn null
+   38:	                   label 0 0[1]	loop = 2EA: _startup_scn null
+   39:	                   label 0 0[1]	___return_lbl00001 = 2F4: _startup_scn null
+   40:	                   label 0 0[1]	test = 1C0: _cinit_scn null
+   41:	                   label 0 0[1]	copy_loop = 218: _cinit_scn null
+   42:	                   label 0 0[1]	copy_one_byte = 21E: _cinit_scn null
+   43:	                   label 0 0[1]	done_copying = 22C: _cinit_scn null
+   44:	                   label 0 0[1]	done = 242: _cinit_scn null
+   45:	                   label 0 0[1]	___return_lbl00002 = 242: _cinit_scn null
+   46:	         external symbol 0 1[1]	_stack = 80: (abs) char
+   47:	         external symbol 0 1[1]	TBLPTRL = FF6: (abs) uchar
+   48:	         external symbol 0 0[1]	__init = 2FE: (abs) function returning void
+   49:	         external symbol 0 0[1]	main = 164: (abs) function returning void
+   50:	         external symbol 0 0[1]	_cinit = 6: (abs) struct
+   51:	         external symbol 0 3[1]	TBLPTR = FF6: (abs) uslong
+   52:	         external symbol 0 1[1]	TABLAT = FF5: (abs) uchar
+   53:	         external symbol 0 1[1]	FSR0L = FE9: (abs) uchar
+   54:	         external symbol 0 1[1]	POSTINC0 = FEE: (abs) uchar
+   55:	               file name 1 0[1]	L:\Software\Projects\Git\Examples\C18\PIC18Extd\src\main.c [0]
+   57:	         external symbol 1 16[16]	buffer = C0: .udata_main.o array [16] of uchar
+   59:	         external symbol 0 1[1]	State = D0: .udata_main.o char
+   60:	           structure tag 1 1[1]	__tag_129: tag 0, size 1, index 68
+   62:	               bit field 1 1[1]	Timeout = 0: size 1
+   64:	               bit field 1 1[1]	None = 1: size 7
+   66:	        end of structure 1 0[1]	.eos: tag 60, size 1, index 0
+   68:	           structure tag 1 1[1]	_timerBits: tag 0, size 1, index 76
+   70:	               bit field 1 1[1]	Timeout = 0: size 1
+   72:	               bit field 1 1[1]	None = 1: size 7
+   74:	        end of structure 1 0[1]	.eos: tag 68, size 1, index 0
+   76:	               union tag 1 1[1]	TimerFlags: tag 0, size 1, index 94
+   78:	         member of union 1 1[1]	Bit = 0: struct [60]
+   80:	         member of union 1 1[1]	Bits = 0: struct [68]
+   82:	         member of union 0 1[1]	Byte = 0: uchar
+   83:	        end of structure 1 0[1]	.eos: tag 76, size 1, index 0
+   85:	         external symbol 1 1[1]	Flags = D1: .udata_main.o union [76]
+   87:	         external symbol 1 2[1]	getbuf = E: .code_main.o function [lineptr 9BA, endndx 55] returning pointer to int
+   89:	              .bf or .ef 1 0[1]	.bf = E: .code_main.o: line 74, index 126
+   91:	      automatic variable 0 2[1]	offset = 0: int
+   92:	              .bb or .eb 1 0[1]	.bb = E: .code_main.o: line 75, index 121
+   94:	           structure tag 1 3[1]	SA: tag 0, size 3, index 102
+   96:	     member of structure 0 2[1]	a1 = 0: int
+   97:	     member of structure 0 1[1]	a2 = 2: uchar
+   98:	        end of structure 1 0[1]	.eos: tag 94, size 3, index 0
+  100:	      automatic variable 1 3[1]	a = 3: struct [94]
+  102:	           structure tag 1 3[1]	SB: tag 0, size 3, index 110
+  104:	     member of structure 0 1[1]	b1 = 0: uchar
+  105:	     member of structure 0 2[1]	b2 = 1: int
+  106:	        end of structure 1 0[1]	.eos: tag 102, size 3, index 0
+  108:	      automatic variable 1 3[1]	b = 6: struct [102]
+  110:	           structure tag 1 6[1]	SC: tag 0, size 6, index 55
+  112:	     member of structure 1 3[1]	a = 0: struct [94]
+  114:	     member of structure 1 3[1]	b = 3: struct [102]
+  116:	        end of structure 1 0[1]	.eos: tag 110, size 6, index 0
+  118:	      automatic variable 1 6[1]	c = 9: struct [110]
+  120:	              .bb or .eb 1 0[1]	.eb = E: .code_main.o: line 81, index 0
+  122:	              .bf or .ef 1 0[1]	.ef = 42: .code_main.o: line 81, index 0
+  124:	         external symbol 1 1[1]	getbbuf = 44: .code_main.o function [lineptr B6A, endndx 55] returning pointer to uchar
+  126:	              .bf or .ef 1 0[1]	.bf = 44: .code_main.o: line 83, index 137
+  128:	      automatic variable 0 1[1]	offset = 0: uchar
+  129:	              .bb or .eb 1 0[1]	.bb = E: .code_main.o: line 84, index 132
+  131:	              .bb or .eb 1 0[1]	.eb = E: .code_main.o: line 86, index 0
+  133:	              .bf or .ef 1 0[1]	.ef = 6C: .code_main.o: line 86, index 0
+  135:	                  static 1 0[1]	getFlags = 6E: .code_main.o function [lineptr CBA, endndx 55] returning union [76]
+  137:	              .bf or .ef 1 0[1]	.bf = 6E: .code_main.o: line 88, index 147
+  139:	              .bb or .eb 1 0[1]	.bb = E: .code_main.o: line 89, index 142
+  141:	              .bb or .eb 1 0[1]	.eb = E: .code_main.o: line 91, index 0
+  143:	              .bf or .ef 1 0[1]	.ef = 74: .code_main.o: line 91, index 0
+  145:	         external symbol 1 0[1]	getstruct = 76: .code_main.o function [lineptr CFA, endndx 55] returning struct [110]
+  147:	              .bf or .ef 1 0[1]	.bf = 76: .code_main.o: line 94, index 163
+  149:	      automatic variable 1 3[1]	a = 3: struct [94]
+  151:	      automatic variable 1 3[1]	b = 0: struct [102]
+  153:	              .bb or .eb 1 0[1]	.bb = E: .code_main.o: line 95, index 158
+  155:	      automatic variable 1 6[1]	c = 7: struct [110]
+  157:	              .bb or .eb 1 0[1]	.eb = E: .code_main.o: line 102, index 0
+  159:	              .bf or .ef 1 0[1]	.ef = DC: .code_main.o: line 102, index 0
+  161:	         external symbol 1 0[1]	doloop = DE: .code_main.o function [lineptr 103A, endndx 55] returning void
+  163:	              .bf or .ef 1 0[1]	.bf = DE: .code_main.o: line 104, index 189
+  165:	      automatic variable 0 1[1]	loop = 0: uchar
+  166:	              .bb or .eb 1 0[1]	.bb = E: .code_main.o: line 105, index 184
+  168:	      automatic variable 1 1[1]	flg = 2: union [76]
+  170:	                  static 0 1[1]	state = D2: .udata_main.o char
+  171:	              .bb or .eb 1 0[1]	.bb = E: .code_main.o: line 110, index 182
+  173:	              .bb or .eb 1 0[1]	.bb = E: .code_main.o: line 113, index 176
+  175:	              .bb or .eb 1 0[1]	.eb = E: .code_main.o: line 117, index 0
+  177:	              .bb or .eb 1 0[1]	.bb = E: .code_main.o: line 121, index 180
+  179:	              .bb or .eb 1 0[1]	.eb = E: .code_main.o: line 123, index 0
+  181:	              .bb or .eb 1 0[1]	.eb = E: .code_main.o: line 125, index 0
+  183:	              .bb or .eb 1 0[1]	.eb = E: .code_main.o: line 126, index 0
+  185:	              .bf or .ef 1 0[1]	.ef = 162: .code_main.o: line 126, index 0
+  187:	         external symbol 1 0[1]	main = 164: .code_main.o function [lineptr 146A, endndx 55] returning void
+  189:	              .bf or .ef 1 0[1]	.bf = 164: .code_main.o: line 131, index 199
+  191:	              .bb or .eb 1 0[1]	.bb = E: .code_main.o: line 132, index 194
+  193:	              .bb or .eb 1 0[1]	.eb = E: .code_main.o: line 145, index 0
+  195:	              .bf or .ef 1 0[1]	.ef = 186: .code_main.o: line 145, index 0
+  197:	         external symbol 1 0[1]	InterruptVectorHigh = 8: InterruptVectorHigh function [lineptr 167A, endndx 55] returning void
+  199:	              .bf or .ef 1 0[1]	.bf = 8: InterruptVectorHigh: line 151, index 209
+  201:	              .bb or .eb 1 0[1]	.bb = 0: InterruptVectorHigh: line 152, index 204
+  203:	              .bb or .eb 1 0[1]	.eb = 0: InterruptVectorHigh: line 156, index 0
+  205:	              .bf or .ef 1 0[1]	.ef = C: InterruptVectorHigh: line 156, index 0
+  207:	         external symbol 1 0[1]	InterruptHandlerHigh = 188: .code_main.o function [lineptr 158A, endndx 55] returning void
+  209:	              .bf or .ef 1 0[1]	.bf = 188: .code_main.o: line 164, index 55
+  211:	              .bb or .eb 1 0[1]	.bb = 0: InterruptVectorHigh: line 165, index 218
+  213:	              .bb or .eb 1 0[1]	.bb = 0: InterruptVectorHigh: line 167, index 216
+  215:	              .bb or .eb 1 0[1]	.eb = 0: InterruptVectorHigh: line 171, index 0
+  217:	              .bb or .eb 1 0[1]	.eb = 0: InterruptVectorHigh: line 172, index 0
+  219:	              .bf or .ef 1 0[1]	.ef = 1A4: .code_main.o: line 172, index 0
+  221:	                  static 1 4[4]	__string_1 = 2F6: .stringtable array [4] of uchar
+  223:	                  static 1 4[4]	__string_0 = 2FA: .stringtable array [4] of uchar
+  225:	                  static 1 6[6]	__tmp_0 = DD: .tmpdata array [6] of uchar
+  227:	                  static 0 1[1]	__config_0 = 300001: .config_300001_main.o uchar
+  228:	                  static 0 1[1]	__config_1 = 300006: .config_300006_main.o uchar
+  229:	             end of file 0 0[1]	.eof
+  230:	               file name 1 0[1]	C:\mcc18\h\p18cxxx.h [0]
+  232:	             end of file 0 0[1]	.eof
+  233:	               file name 1 0[1]	C:\mcc18\h\p18f1230.h [0]
+  235:	             end of file 0 0[1]	.eof
+  236:	               file name 1 0[1]	C:\mcc18\h\string.h [0]
+  238:	             end of file 0 0[1]	.eof
+  239:	               file name 1 0[1]	C:\mcc18\h\stddef.h [0]
+  241:	             end of file 0 0[1]	.eof
+  242:	                   label 0 0[1]	___return_lbl00011 = C: InterruptVectorHigh null
+  243:	         external symbol 0 1[1]	FSR2L = FD9: (abs) uchar
+  244:	         external symbol 0 1[1]	POSTINC1 = FE6: (abs) uchar
+  245:	         external symbol 0 1[1]	FSR1L = FE1: (abs) uchar
+  246:	         external symbol 0 1[1]	STATUS = FD8: (abs) uchar
+  247:	         external symbol 0 1[1]	PRODL = FF3: (abs) uchar
+  248:	         external symbol 0 1[1]	INDF1 = FE7: (abs) uchar
+  249:	         external symbol 0 1[1]	FSR0L = FE9: (abs) uchar
+  250:	         external symbol 0 1[1]	POSTDEC0 = FED: (abs) uchar
+  251:	         external symbol 0 1[1]	INDF0 = FEF: (abs) uchar
+  252:	         external symbol 0 0[1]	LATBbits = F8A: (abs) struct
+  253:	         external symbol 0 1[1]	strcmpram2pgm = 244: (abs) function returning char
+  254:	         external symbol 0 1[1]	strncpypgm2ram = 270: (abs) function returning pointer to uchar
+  255:	         external symbol 0 1[1]	INTCON = FF2: (abs) uchar
+  256:	         external symbol 0 1[1]	INTCON2 = FF1: (abs) uchar
+  257:	         external symbol 0 0[1]	RCONbits = FD0: (abs) union
+  258:	         external symbol 0 1[1]	TMR0H = FD7: (abs) uchar
+  259:	         external symbol 0 1[1]	TMR0L = FD6: (abs) uchar
+  260:	         external symbol 0 1[1]	T0CON = FD5: (abs) uchar
+  261:	         external symbol 0 0[1]	INTCONbits = FF2: (abs) union
+  262:	         external symbol 0 1[1]	TRISB = F93: (abs) uchar
+  263:	         external symbol 0 1[1]	PREINC1 = FE4: (abs) uchar
+  264:	         external symbol 0 1[1]	POSTDEC1 = FE5: (abs) uchar
+  265:	               file name 1 0[1]	E:\3.46\pic18-lt\cxx-framework\src\extended\proc\p18f1230.asm [0]
+  267:	 absolute listing toggle 0 0[1]	OFF: 2
+  268:	                 section 1 0[1]	SFR_UNBANKED0 = F80: size 45, relocs 0, lines 0
+  270:	         external symbol 0 0[1]	PORTA = F80: SFR_UNBANKED0 null
+  271:	         external symbol 0 0[1]	PORTAbits = F80: SFR_UNBANKED0 null
+  272:	         external symbol 0 0[1]	PORTB = F81: SFR_UNBANKED0 null
+  273:	         external symbol 0 0[1]	PORTBbits = F81: SFR_UNBANKED0 null
+  274:	         external symbol 0 0[1]	OVDCONS = F82: SFR_UNBANKED0 null
+  275:	         external symbol 0 0[1]	OVDCONSbits = F82: SFR_UNBANKED0 null
+  276:	         external symbol 0 0[1]	OVDCOND = F83: SFR_UNBANKED0 null
+  277:	         external symbol 0 0[1]	OVDCONDbits = F83: SFR_UNBANKED0 null
+  278:	         external symbol 0 0[1]	DTCON = F84: SFR_UNBANKED0 null
+  279:	         external symbol 0 0[1]	DTCONbits = F84: SFR_UNBANKED0 null
+  280:	         external symbol 0 0[1]	PWMCON1 = F85: SFR_UNBANKED0 null
+  281:	         external symbol 0 0[1]	PWMCON1bits = F85: SFR_UNBANKED0 null
+  282:	         external symbol 0 0[1]	PWMCON0 = F86: SFR_UNBANKED0 null
+  283:	         external symbol 0 0[1]	PWMCON0bits = F86: SFR_UNBANKED0 null
+  284:	         external symbol 0 0[1]	SEVTCMPH = F87: SFR_UNBANKED0 null
+  285:	         external symbol 0 0[1]	SEVTCMPHbits = F87: SFR_UNBANKED0 null
+  286:	         external symbol 0 0[1]	SEVTCMPL = F88: SFR_UNBANKED0 null
+  287:	         external symbol 0 0[1]	LATA = F89: SFR_UNBANKED0 null
+  288:	         external symbol 0 0[1]	LATAbits = F89: SFR_UNBANKED0 null
+  289:	         external symbol 0 0[1]	LATB = F8A: SFR_UNBANKED0 null
+  290:	         external symbol 0 0[1]	LATBbits = F8A: SFR_UNBANKED0 null
+  291:	         external symbol 0 0[1]	FLTCONFIG = F8B: SFR_UNBANKED0 null
+  292:	         external symbol 0 0[1]	FLTCONFIGbits = F8B: SFR_UNBANKED0 null
+  293:	         external symbol 0 0[1]	PDC2H = F8C: SFR_UNBANKED0 null
+  294:	         external symbol 0 0[1]	PDC2Hbits = F8C: SFR_UNBANKED0 null
+  295:	         external symbol 0 0[1]	PDC2L = F8D: SFR_UNBANKED0 null
+  296:	         external symbol 0 0[1]	PDC1H = F8E: SFR_UNBANKED0 null
+  297:	         external symbol 0 0[1]	PDC1Hbits = F8E: SFR_UNBANKED0 null
+  298:	         external symbol 0 0[1]	PDC1L = F8F: SFR_UNBANKED0 null
+  299:	         external symbol 0 0[1]	PDC0H = F90: SFR_UNBANKED0 null
+  300:	         external symbol 0 0[1]	PDC0Hbits = F90: SFR_UNBANKED0 null
+  301:	         external symbol 0 0[1]	PDC0L = F91: SFR_UNBANKED0 null
+  302:	         external symbol 0 0[1]	DDRA = F92: SFR_UNBANKED0 null
+  303:	         external symbol 0 0[1]	DDRAbits = F92: SFR_UNBANKED0 null
+  304:	         external symbol 0 0[1]	TRISA = F92: SFR_UNBANKED0 null
+  305:	         external symbol 0 0[1]	TRISAbits = F92: SFR_UNBANKED0 null
+  306:	         external symbol 0 0[1]	DDRB = F93: SFR_UNBANKED0 null
+  307:	         external symbol 0 0[1]	DDRBbits = F93: SFR_UNBANKED0 null
+  308:	         external symbol 0 0[1]	TRISB = F93: SFR_UNBANKED0 null
+  309:	         external symbol 0 0[1]	TRISBbits = F93: SFR_UNBANKED0 null
+  310:	         external symbol 0 0[1]	PTPERH = F95: SFR_UNBANKED0 null
+  311:	         external symbol 0 0[1]	PTPERHbits = F95: SFR_UNBANKED0 null
+  312:	         external symbol 0 0[1]	PTPERL = F96: SFR_UNBANKED0 null
+  313:	         external symbol 0 0[1]	PTMRH = F97: SFR_UNBANKED0 null
+  314:	         external symbol 0 0[1]	PTMRHbits = F97: SFR_UNBANKED0 null
+  315:	         external symbol 0 0[1]	PTMRL = F98: SFR_UNBANKED0 null
+  316:	         external symbol 0 0[1]	PTCON1 = F99: SFR_UNBANKED0 null
+  317:	         external symbol 0 0[1]	PTCON1bits = F99: SFR_UNBANKED0 null
+  318:	         external symbol 0 0[1]	PTCON0 = F9A: SFR_UNBANKED0 null
+  319:	         external symbol 0 0[1]	PTCON0bits = F9A: SFR_UNBANKED0 null
+  320:	         external symbol 0 0[1]	OSCTUNE = F9B: SFR_UNBANKED0 null
+  321:	         external symbol 0 0[1]	OSCTUNEbits = F9B: SFR_UNBANKED0 null
+  322:	         external symbol 0 0[1]	PIE1 = F9D: SFR_UNBANKED0 null
+  323:	         external symbol 0 0[1]	PIE1bits = F9D: SFR_UNBANKED0 null
+  324:	         external symbol 0 0[1]	PIR1 = F9E: SFR_UNBANKED0 null
+  325:	         external symbol 0 0[1]	PIR1bits = F9E: SFR_UNBANKED0 null
+  326:	         external symbol 0 0[1]	IPR1 = F9F: SFR_UNBANKED0 null
+  327:	         external symbol 0 0[1]	IPR1bits = F9F: SFR_UNBANKED0 null
+  328:	         external symbol 0 0[1]	PIE2 = FA0: SFR_UNBANKED0 null
+  329:	         external symbol 0 0[1]	PIE2bits = FA0: SFR_UNBANKED0 null
+  330:	         external symbol 0 0[1]	PIR2 = FA1: SFR_UNBANKED0 null
+  331:	         external symbol 0 0[1]	PIR2bits = FA1: SFR_UNBANKED0 null
+  332:	         external symbol 0 0[1]	IPR2 = FA2: SFR_UNBANKED0 null
+  333:	         external symbol 0 0[1]	IPR2bits = FA2: SFR_UNBANKED0 null
+  334:	         external symbol 0 0[1]	PIE3 = FA3: SFR_UNBANKED0 null
+  335:	         external symbol 0 0[1]	PIE3bits = FA3: SFR_UNBANKED0 null
+  336:	         external symbol 0 0[1]	PIR3 = FA4: SFR_UNBANKED0 null
+  337:	         external symbol 0 0[1]	PIR3bits = FA4: SFR_UNBANKED0 null
+  338:	         external symbol 0 0[1]	IPR3 = FA5: SFR_UNBANKED0 null
+  339:	         external symbol 0 0[1]	IPR3bits = FA5: SFR_UNBANKED0 null
+  340:	         external symbol 0 0[1]	EECON1 = FA6: SFR_UNBANKED0 null
+  341:	         external symbol 0 0[1]	EECON1bits = FA6: SFR_UNBANKED0 null
+  342:	         external symbol 0 0[1]	EECON2 = FA7: SFR_UNBANKED0 null
+  343:	         external symbol 0 0[1]	EEDATA = FA8: SFR_UNBANKED0 null
+  344:	         external symbol 0 0[1]	EEADR = FA9: SFR_UNBANKED0 null
+  345:	         external symbol 0 0[1]	RCSTA = FAB: SFR_UNBANKED0 null
+  346:	         external symbol 0 0[1]	RCSTAbits = FAB: SFR_UNBANKED0 null
+  347:	         external symbol 0 0[1]	TXSTA = FAC: SFR_UNBANKED0 null
+  348:	         external symbol 0 0[1]	TXSTAbits = FAC: SFR_UNBANKED0 null
+  349:	         external symbol 0 0[1]	TXREG = FAD: SFR_UNBANKED0 null
+  350:	         external symbol 0 0[1]	RCREG = FAE: SFR_UNBANKED0 null
+  351:	         external symbol 0 0[1]	SPBRG = FAF: SFR_UNBANKED0 null
+  352:	         external symbol 0 0[1]	SPBRGH = FB0: SFR_UNBANKED0 null
+  353:	         external symbol 0 0[1]	CMCON = FB4: SFR_UNBANKED0 null
+  354:	         external symbol 0 0[1]	CMCONbits = FB4: SFR_UNBANKED0 null
+  355:	         external symbol 0 0[1]	CVRCON = FB5: SFR_UNBANKED0 null
+  356:	         external symbol 0 0[1]	CVRCONbits = FB5: SFR_UNBANKED0 null
+  357:	         external symbol 0 0[1]	BAUDCON = FB8: SFR_UNBANKED0 null
+  358:	         external symbol 0 0[1]	BAUDCONbits = FB8: SFR_UNBANKED0 null
+  359:	         external symbol 0 0[1]	BAUDCTL = FB8: SFR_UNBANKED0 null
+  360:	         external symbol 0 0[1]	BAUDCTLbits = FB8: SFR_UNBANKED0 null
+  361:	         external symbol 0 0[1]	ADCON2 = FC0: SFR_UNBANKED0 null
+  362:	         external symbol 0 0[1]	ADCON2bits = FC0: SFR_UNBANKED0 null
+  363:	         external symbol 0 0[1]	ADCON1 = FC1: SFR_UNBANKED0 null
+  364:	         external symbol 0 0[1]	ADCON1bits = FC1: SFR_UNBANKED0 null
+  365:	         external symbol 0 0[1]	ADCON0 = FC2: SFR_UNBANKED0 null
+  366:	         external symbol 0 0[1]	ADCON0bits = FC2: SFR_UNBANKED0 null
+  367:	         external symbol 0 0[1]	ADRES = FC3: SFR_UNBANKED0 null
+  368:	         external symbol 0 0[1]	ADRESL = FC3: SFR_UNBANKED0 null
+  369:	         external symbol 0 0[1]	ADRESH = FC4: SFR_UNBANKED0 null
+  370:	                 section 1 0[1]	SFR_UNBANKED1 = FCD: size 33, relocs 0, lines 0
+  372:	         external symbol 0 0[1]	T1CON = FCD: SFR_UNBANKED1 null
+  373:	         external symbol 0 0[1]	T1CONbits = FCD: SFR_UNBANKED1 null
+  374:	         external symbol 0 0[1]	TMR1L = FCE: SFR_UNBANKED1 null
+  375:	         external symbol 0 0[1]	TMR1H = FCF: SFR_UNBANKED1 null
+  376:	         external symbol 0 0[1]	RCON = FD0: SFR_UNBANKED1 null
+  377:	         external symbol 0 0[1]	RCONbits = FD0: SFR_UNBANKED1 null
+  378:	         external symbol 0 0[1]	WDTCON = FD1: SFR_UNBANKED1 null
+  379:	         external symbol 0 0[1]	WDTCONbits = FD1: SFR_UNBANKED1 null
+  380:	         external symbol 0 0[1]	LVDCON = FD2: SFR_UNBANKED1 null
+  381:	         external symbol 0 0[1]	LVDCONbits = FD2: SFR_UNBANKED1 null
+  382:	         external symbol 0 0[1]	OSCCON = FD3: SFR_UNBANKED1 null
+  383:	         external symbol 0 0[1]	OSCCONbits = FD3: SFR_UNBANKED1 null
+  384:	         external symbol 0 0[1]	T0CON = FD5: SFR_UNBANKED1 null
+  385:	         external symbol 0 0[1]	T0CONbits = FD5: SFR_UNBANKED1 null
+  386:	         external symbol 0 0[1]	TMR0L = FD6: SFR_UNBANKED1 null
+  387:	         external symbol 0 0[1]	TMR0H = FD7: SFR_UNBANKED1 null
+  388:	         external symbol 0 0[1]	STATUS = FD8: SFR_UNBANKED1 null
+  389:	         external symbol 0 0[1]	STATUSbits = FD8: SFR_UNBANKED1 null
+  390:	         external symbol 0 0[1]	FSR2 = FD9: SFR_UNBANKED1 null
+  391:	         external symbol 0 0[1]	FSR2L = FD9: SFR_UNBANKED1 null
+  392:	         external symbol 0 0[1]	FSR2H = FDA: SFR_UNBANKED1 null
+  393:	         external symbol 0 0[1]	PLUSW2 = FDB: SFR_UNBANKED1 null
+  394:	         external symbol 0 0[1]	PREINC2 = FDC: SFR_UNBANKED1 null
+  395:	         external symbol 0 0[1]	POSTDEC2 = FDD: SFR_UNBANKED1 null
+  396:	         external symbol 0 0[1]	POSTINC2 = FDE: SFR_UNBANKED1 null
+  397:	         external symbol 0 0[1]	INDF2 = FDF: SFR_UNBANKED1 null
+  398:	         external symbol 0 0[1]	BSR = FE0: SFR_UNBANKED1 null
+  399:	         external symbol 0 0[1]	FSR1 = FE1: SFR_UNBANKED1 null
+  400:	         external symbol 0 0[1]	FSR1L = FE1: SFR_UNBANKED1 null
+  401:	         external symbol 0 0[1]	FSR1H = FE2: SFR_UNBANKED1 null
+  402:	         external symbol 0 0[1]	PLUSW1 = FE3: SFR_UNBANKED1 null
+  403:	         external symbol 0 0[1]	PREINC1 = FE4: SFR_UNBANKED1 null
+  404:	         external symbol 0 0[1]	POSTDEC1 = FE5: SFR_UNBANKED1 null
+  405:	         external symbol 0 0[1]	POSTINC1 = FE6: SFR_UNBANKED1 null
+  406:	         external symbol 0 0[1]	INDF1 = FE7: SFR_UNBANKED1 null
+  407:	         external symbol 0 0[1]	W = FE8: SFR_UNBANKED1 null
+  408:	         external symbol 0 0[1]	WREG = FE8: SFR_UNBANKED1 null
+  409:	         external symbol 0 0[1]	FSR0 = FE9: SFR_UNBANKED1 null
+  410:	         external symbol 0 0[1]	FSR0L = FE9: SFR_UNBANKED1 null
+  411:	         external symbol 0 0[1]	FSR0H = FEA: SFR_UNBANKED1 null
+  412:	         external symbol 0 0[1]	PLUSW0 = FEB: SFR_UNBANKED1 null
+  413:	         external symbol 0 0[1]	PREINC0 = FEC: SFR_UNBANKED1 null
+  414:	         external symbol 0 0[1]	POSTDEC0 = FED: SFR_UNBANKED1 null
+  415:	         external symbol 0 0[1]	POSTINC0 = FEE: SFR_UNBANKED1 null
+  416:	         external symbol 0 0[1]	INDF0 = FEF: SFR_UNBANKED1 null
+  417:	         external symbol 0 0[1]	INTCON3 = FF0: SFR_UNBANKED1 null
+  418:	         external symbol 0 0[1]	INTCON3bits = FF0: SFR_UNBANKED1 null
+  419:	         external symbol 0 0[1]	INTCON2 = FF1: SFR_UNBANKED1 null
+  420:	         external symbol 0 0[1]	INTCON2bits = FF1: SFR_UNBANKED1 null
+  421:	         external symbol 0 0[1]	INTCON = FF2: SFR_UNBANKED1 null
+  422:	         external symbol 0 0[1]	INTCONbits = FF2: SFR_UNBANKED1 null
+  423:	         external symbol 0 0[1]	PROD = FF3: SFR_UNBANKED1 null
+  424:	         external symbol 0 0[1]	PRODL = FF3: SFR_UNBANKED1 null
+  425:	         external symbol 0 0[1]	PRODH = FF4: SFR_UNBANKED1 null
+  426:	         external symbol 0 0[1]	TABLAT = FF5: SFR_UNBANKED1 null
+  427:	         external symbol 0 0[1]	TBLPTR = FF6: SFR_UNBANKED1 null
+  428:	         external symbol 0 0[1]	TBLPTRL = FF6: SFR_UNBANKED1 null
+  429:	         external symbol 0 0[1]	TBLPTRH = FF7: SFR_UNBANKED1 null
+  430:	         external symbol 0 0[1]	TBLPTRU = FF8: SFR_UNBANKED1 null
+  431:	         external symbol 0 0[1]	PC = FF9: SFR_UNBANKED1 null
+  432:	         external symbol 0 0[1]	PCL = FF9: SFR_UNBANKED1 null
+  433:	         external symbol 0 0[1]	PCLATH = FFA: SFR_UNBANKED1 null
+  434:	         external symbol 0 0[1]	PCLATU = FFB: SFR_UNBANKED1 null
+  435:	         external symbol 0 0[1]	STKPTR = FFC: SFR_UNBANKED1 null
+  436:	         external symbol 0 0[1]	STKPTRbits = FFC: SFR_UNBANKED1 null
+  437:	         external symbol 0 0[1]	TOS = FFD: SFR_UNBANKED1 null
+  438:	         external symbol 0 0[1]	TOSL = FFD: SFR_UNBANKED1 null
+  439:	         external symbol 0 0[1]	TOSH = FFE: SFR_UNBANKED1 null
+  440:	         external symbol 0 0[1]	TOSU = FFF: SFR_UNBANKED1 null
+  441:	                 section 1 0[1]	.code = 0: size 20, relocs 10, lines 16
+  443:	         external symbol 0 0[1]	__zero_memory = 2BC: .code null
+  444:	                   label 0 0[1]	zero_block = 2CA: .code null
+  445:	                   label 0 0[1]	loop_h = 2CA: .code null
+  446:	                   label 0 0[1]	compare_l = 2D2: .code null
+  447:	                   label 0 0[1]	loop_l = 2D4: .code null
+  448:	 absolute listing toggle 0 0[1]	ON: 188
+  449:	             end of file 0 0[1]	.eof
+  450:	               file name 1 0[1]	E:\3.46\pic18-lt\cxx-framework\src\extended\stdclib\__init.c [0]
+  452:	         external symbol 1 0[1]	__init = 2FE: .code___init.o function [lineptr F0, endndx 450] returning void
+  454:	              .bf or .ef 1 0[1]	.bf = 2FE: .code___init.o: line 7, index 450
+  456:	              .bb or .eb 1 0[1]	.bb = 2FE: .code___init.o: line 8, index 459
+  458:	              .bb or .eb 1 0[1]	.eb = 2FE: .code___init.o: line 9, index 0
+  460:	              .bf or .ef 1 0[1]	.ef = 2FE: .code___init.o: line 9, index 0
+  462:	             end of file 0 0[1]	.eof
+  463:	               file name 1 0[1]	E:\3.46\pic18-lt\cxx-framework\src\extended\stdclib\scmpr2p.asm [0]
+  465:	               file name 1 0[1]	C:\Program Files\Microchip\mplabc18\v3.46\mpasm\P18CXXX.INC [3]
+  467:	 absolute listing toggle 0 0[1]	ON: 1
+  468:	 absolute listing toggle 0 0[1]	OFF: 3
+  469:	               file name 1 0[1]	C:\Program Files\Microchip\mplabc18\v3.46\mpasm\P18C452.INC [26]
+  471:	 absolute listing toggle 0 0[1]	ON: 1
+  472:	 absolute listing toggle 0 0[1]	OFF: 9
+  473:	 absolute listing toggle 0 0[1]	ON: 42F
+  474:	             end of file 0 0[1]	.eof
+  475:	             end of file 0 0[1]	.eof
+  476:	               file name 1 0[1]	E:\3.46\pic18-lt\cxx-framework\src\extended\stdclib\P18MACRO.INC [4]
+  478:	 absolute listing toggle 0 0[1]	ON: 8
+  479:	             end of file 0 0[1]	.eof
+  480:	                 section 1 0[1]	STRING = 0: size 2C, relocs 9, lines 22
+  482:	         external symbol 0 0[1]	strcmpram2pgm = 244: STRING null
+  483:	                   label 0 0[1]	jLoop = 262: STRING null
+  484:	                   label 0 0[1]	jEnd = 26E: STRING null
+  485:	             end of file 0 0[1]	.eof
+  486:	               file name 1 0[1]	E:\3.46\pic18-lt\cxx-framework\src\extended\stdclib\sncpyp2r.asm [0]
+  488:	               file name 1 0[1]	C:\Program Files\Microchip\mplabc18\v3.46\mpasm\P18CXXX.INC [3]
+  490:	 absolute listing toggle 0 0[1]	ON: 1
+  491:	 absolute listing toggle 0 0[1]	OFF: 3
+  492:	               file name 1 0[1]	C:\Program Files\Microchip\mplabc18\v3.46\mpasm\P18C452.INC [26]
+  494:	 absolute listing toggle 0 0[1]	ON: 1
+  495:	 absolute listing toggle 0 0[1]	OFF: 9
+  496:	 absolute listing toggle 0 0[1]	ON: 42F
+  497:	             end of file 0 0[1]	.eof
+  498:	             end of file 0 0[1]	.eof
+  499:	               file name 1 0[1]	E:\3.46\pic18-lt\cxx-framework\src\extended\stdclib\P18MACRO.INC [4]
+  501:	 absolute listing toggle 0 0[1]	ON: 8
+  502:	             end of file 0 0[1]	.eof
+  503:	                 section 1 0[1]	STRING = 0: size 4C, relocs 16, lines 38
+  505:	         external symbol 0 0[1]	strncpypgm2ram = 270: STRING null
+  506:	                   label 0 0[1]	jLoop = 296: STRING null
+  507:	                   label 0 0[1]	_3jContinue = 2A2: STRING null
+  508:	                   label 0 0[1]	_4jEnd = 2AC: STRING null
+  509:	                   label 0 0[1]	jEnd = 2BA: STRING null
+  510:	             end of file 0 0[1]	.eof
+  511:	              null class 0 0[1]	__MPLAB_BUILD
+
+Section 6 line numbers: 3, file offset 0x7B0
+00025:	srcndx: 0, paddr: 0x0, flags 0x0, fcnndx: 2
+00025:	srcndx: 0, paddr: 0x2, flags 0x0, fcnndx: 2
+00027:	srcndx: 0, paddr: 0x4, flags 0x0, fcnndx: 2
+Section 7 line numbers: 13, file offset 0x7E0
+00034:	srcndx: 0, paddr: 0x2DC, flags 0x0, fcnndx: 12
+00034:	srcndx: 0, paddr: 0x2DE, flags 0x0, fcnndx: 12
+00035:	srcndx: 0, paddr: 0x2E0, flags 0x0, fcnndx: 12
+00035:	srcndx: 0, paddr: 0x2E2, flags 0x0, fcnndx: 12
+00037:	srcndx: 0, paddr: 0x2E4, flags 0x0, fcnndx: 12
+00040:	srcndx: 0, paddr: 0x2E6, flags 0x0, fcnndx: 12
+00040:	srcndx: 0, paddr: 0x2E8, flags 0x0, fcnndx: 12
+00045:	srcndx: 0, paddr: 0x2EA, flags 0x0, fcnndx: 12
+00045:	srcndx: 0, paddr: 0x2EC, flags 0x0, fcnndx: 12
+00048:	srcndx: 0, paddr: 0x2EE, flags 0x0, fcnndx: 12
+00048:	srcndx: 0, paddr: 0x2F0, flags 0x0, fcnndx: 12
+00050:	srcndx: 0, paddr: 0x2F2, flags 0x0, fcnndx: 12
+00051:	srcndx: 0, paddr: 0x2F4, flags 0x0, fcnndx: 12
+Section 8 line numbers: 79, file offset 0x8B0
+00081:	srcndx: 0, paddr: 0x1A6, flags 0x0, fcnndx: 22
+00081:	srcndx: 0, paddr: 0x1A8, flags 0x0, fcnndx: 22
+00081:	srcndx: 0, paddr: 0x1AA, flags 0x0, fcnndx: 22
+00081:	srcndx: 0, paddr: 0x1AC, flags 0x0, fcnndx: 22
+00081:	srcndx: 0, paddr: 0x1AE, flags 0x0, fcnndx: 22
+00081:	srcndx: 0, paddr: 0x1B0, flags 0x0, fcnndx: 22
+00083:	srcndx: 0, paddr: 0x1B2, flags 0x0, fcnndx: 22
+00084:	srcndx: 0, paddr: 0x1B4, flags 0x0, fcnndx: 22
+00085:	srcndx: 0, paddr: 0x1B6, flags 0x0, fcnndx: 22
+00086:	srcndx: 0, paddr: 0x1B8, flags 0x0, fcnndx: 22
+00087:	srcndx: 0, paddr: 0x1BA, flags 0x0, fcnndx: 22
+00088:	srcndx: 0, paddr: 0x1BC, flags 0x0, fcnndx: 22
+00089:	srcndx: 0, paddr: 0x1BE, flags 0x0, fcnndx: 22
+00095:	srcndx: 0, paddr: 0x1C0, flags 0x0, fcnndx: 22
+00096:	srcndx: 0, paddr: 0x1C2, flags 0x0, fcnndx: 22
+00097:	srcndx: 0, paddr: 0x1C4, flags 0x0, fcnndx: 22
+00099:	srcndx: 0, paddr: 0x1C6, flags 0x0, fcnndx: 22
+00109:	srcndx: 0, paddr: 0x1C8, flags 0x0, fcnndx: 22
+00110:	srcndx: 0, paddr: 0x1CA, flags 0x0, fcnndx: 22
+00111:	srcndx: 0, paddr: 0x1CC, flags 0x0, fcnndx: 22
+00112:	srcndx: 0, paddr: 0x1CE, flags 0x0, fcnndx: 22
+00113:	srcndx: 0, paddr: 0x1D0, flags 0x0, fcnndx: 22
+00114:	srcndx: 0, paddr: 0x1D2, flags 0x0, fcnndx: 22
+00115:	srcndx: 0, paddr: 0x1D4, flags 0x0, fcnndx: 22
+00116:	srcndx: 0, paddr: 0x1D6, flags 0x0, fcnndx: 22
+00117:	srcndx: 0, paddr: 0x1D8, flags 0x0, fcnndx: 22
+00119:	srcndx: 0, paddr: 0x1DA, flags 0x0, fcnndx: 22
+00121:	srcndx: 0, paddr: 0x1DC, flags 0x0, fcnndx: 22
+00122:	srcndx: 0, paddr: 0x1DE, flags 0x0, fcnndx: 22
+00123:	srcndx: 0, paddr: 0x1E0, flags 0x0, fcnndx: 22
+00124:	srcndx: 0, paddr: 0x1E2, flags 0x0, fcnndx: 22
+00125:	srcndx: 0, paddr: 0x1E4, flags 0x0, fcnndx: 22
+00126:	srcndx: 0, paddr: 0x1E6, flags 0x0, fcnndx: 22
+00128:	srcndx: 0, paddr: 0x1E8, flags 0x0, fcnndx: 22
+00129:	srcndx: 0, paddr: 0x1EA, flags 0x0, fcnndx: 22
+00131:	srcndx: 0, paddr: 0x1EC, flags 0x0, fcnndx: 22
+00132:	srcndx: 0, paddr: 0x1EE, flags 0x0, fcnndx: 22
+00133:	srcndx: 0, paddr: 0x1F0, flags 0x0, fcnndx: 22
+00134:	srcndx: 0, paddr: 0x1F2, flags 0x0, fcnndx: 22
+00135:	srcndx: 0, paddr: 0x1F4, flags 0x0, fcnndx: 22
+00136:	srcndx: 0, paddr: 0x1F6, flags 0x0, fcnndx: 22
+00138:	srcndx: 0, paddr: 0x1F8, flags 0x0, fcnndx: 22
+00139:	srcndx: 0, paddr: 0x1FA, flags 0x0, fcnndx: 22
+00148:	srcndx: 0, paddr: 0x1FC, flags 0x0, fcnndx: 22
+00148:	srcndx: 0, paddr: 0x1FE, flags 0x0, fcnndx: 22
+00148:	srcndx: 0, paddr: 0x200, flags 0x0, fcnndx: 22
+00148:	srcndx: 0, paddr: 0x202, flags 0x0, fcnndx: 22
+00148:	srcndx: 0, paddr: 0x204, flags 0x0, fcnndx: 22
+00148:	srcndx: 0, paddr: 0x206, flags 0x0, fcnndx: 22
+00151:	srcndx: 0, paddr: 0x208, flags 0x0, fcnndx: 22
+00151:	srcndx: 0, paddr: 0x20A, flags 0x0, fcnndx: 22
+00151:	srcndx: 0, paddr: 0x20C, flags 0x0, fcnndx: 22
+00151:	srcndx: 0, paddr: 0x20E, flags 0x0, fcnndx: 22
+00151:	srcndx: 0, paddr: 0x210, flags 0x0, fcnndx: 22
+00151:	srcndx: 0, paddr: 0x212, flags 0x0, fcnndx: 22
+00156:	srcndx: 0, paddr: 0x214, flags 0x0, fcnndx: 22
+00157:	srcndx: 0, paddr: 0x216, flags 0x0, fcnndx: 22
+00159:	srcndx: 0, paddr: 0x218, flags 0x0, fcnndx: 22
+00160:	srcndx: 0, paddr: 0x21A, flags 0x0, fcnndx: 22
+00161:	srcndx: 0, paddr: 0x21C, flags 0x0, fcnndx: 22
+00164:	srcndx: 0, paddr: 0x21E, flags 0x0, fcnndx: 22
+00165:	srcndx: 0, paddr: 0x220, flags 0x0, fcnndx: 22
+00166:	srcndx: 0, paddr: 0x222, flags 0x0, fcnndx: 22
+00169:	srcndx: 0, paddr: 0x224, flags 0x0, fcnndx: 22
+00170:	srcndx: 0, paddr: 0x226, flags 0x0, fcnndx: 22
+00171:	srcndx: 0, paddr: 0x228, flags 0x0, fcnndx: 22
+00172:	srcndx: 0, paddr: 0x22A, flags 0x0, fcnndx: 22
+00178:	srcndx: 0, paddr: 0x22C, flags 0x0, fcnndx: 22
+00178:	srcndx: 0, paddr: 0x22E, flags 0x0, fcnndx: 22
+00178:	srcndx: 0, paddr: 0x230, flags 0x0, fcnndx: 22
+00178:	srcndx: 0, paddr: 0x232, flags 0x0, fcnndx: 22
+00178:	srcndx: 0, paddr: 0x234, flags 0x0, fcnndx: 22
+00178:	srcndx: 0, paddr: 0x236, flags 0x0, fcnndx: 22
+00180:	srcndx: 0, paddr: 0x238, flags 0x0, fcnndx: 22
+00180:	srcndx: 0, paddr: 0x23A, flags 0x0, fcnndx: 22
+00180:	srcndx: 0, paddr: 0x23C, flags 0x0, fcnndx: 22
+00180:	srcndx: 0, paddr: 0x23E, flags 0x0, fcnndx: 22
+00181:	srcndx: 0, paddr: 0x240, flags 0x0, fcnndx: 22
+00184:	srcndx: 0, paddr: 0x242, flags 0x0, fcnndx: 22
+Section 13 line numbers: 204, file offset 0xDA0
+00074:	srcndx: 55, paddr: 0xE, flags 0x0, fcnndx: 87
+00074:	srcndx: 55, paddr: 0x10, flags 0x0, fcnndx: 87
+00074:	srcndx: 55, paddr: 0x12, flags 0x0, fcnndx: 87
+00074:	srcndx: 55, paddr: 0x14, flags 0x0, fcnndx: 87
+00074:	srcndx: 55, paddr: 0x16, flags 0x0, fcnndx: 87
+00074:	srcndx: 55, paddr: 0x18, flags 0x0, fcnndx: 87
+00080:	srcndx: 55, paddr: 0x1A, flags 0x0, fcnndx: 87
+00080:	srcndx: 55, paddr: 0x1C, flags 0x0, fcnndx: 87
+00080:	srcndx: 55, paddr: 0x1E, flags 0x0, fcnndx: 87
+00080:	srcndx: 55, paddr: 0x20, flags 0x0, fcnndx: 87
+00080:	srcndx: 55, paddr: 0x22, flags 0x0, fcnndx: 87
+00080:	srcndx: 55, paddr: 0x24, flags 0x0, fcnndx: 87
+00080:	srcndx: 55, paddr: 0x26, flags 0x0, fcnndx: 87
+00080:	srcndx: 55, paddr: 0x28, flags 0x0, fcnndx: 87
+00080:	srcndx: 55, paddr: 0x2A, flags 0x0, fcnndx: 87
+00080:	srcndx: 55, paddr: 0x2C, flags 0x0, fcnndx: 87
+00080:	srcndx: 55, paddr: 0x2E, flags 0x0, fcnndx: 87
+00080:	srcndx: 55, paddr: 0x30, flags 0x0, fcnndx: 87
+00080:	srcndx: 55, paddr: 0x32, flags 0x0, fcnndx: 87
+00080:	srcndx: 55, paddr: 0x34, flags 0x0, fcnndx: 87
+00080:	srcndx: 55, paddr: 0x36, flags 0x0, fcnndx: 87
+00080:	srcndx: 55, paddr: 0x38, flags 0x0, fcnndx: 87
+00080:	srcndx: 55, paddr: 0x3A, flags 0x0, fcnndx: 87
+00081:	srcndx: 55, paddr: 0x3C, flags 0x0, fcnndx: 87
+00081:	srcndx: 55, paddr: 0x3E, flags 0x0, fcnndx: 87
+00081:	srcndx: 55, paddr: 0x40, flags 0x0, fcnndx: 87
+00081:	srcndx: 55, paddr: 0x42, flags 0x0, fcnndx: 87
+00083:	srcndx: 55, paddr: 0x44, flags 0x0, fcnndx: 124
+00083:	srcndx: 55, paddr: 0x46, flags 0x0, fcnndx: 124
+00083:	srcndx: 55, paddr: 0x48, flags 0x0, fcnndx: 124
+00083:	srcndx: 55, paddr: 0x4A, flags 0x0, fcnndx: 124
+00083:	srcndx: 55, paddr: 0x4C, flags 0x0, fcnndx: 124
+00085:	srcndx: 55, paddr: 0x4E, flags 0x0, fcnndx: 124
+00085:	srcndx: 55, paddr: 0x50, flags 0x0, fcnndx: 124
+00085:	srcndx: 55, paddr: 0x52, flags 0x0, fcnndx: 124
+00085:	srcndx: 55, paddr: 0x54, flags 0x0, fcnndx: 124
+00085:	srcndx: 55, paddr: 0x56, flags 0x0, fcnndx: 124
+00085:	srcndx: 55, paddr: 0x58, flags 0x0, fcnndx: 124
+00085:	srcndx: 55, paddr: 0x5A, flags 0x0, fcnndx: 124
+00085:	srcndx: 55, paddr: 0x5C, flags 0x0, fcnndx: 124
+00085:	srcndx: 55, paddr: 0x5E, flags 0x0, fcnndx: 124
+00085:	srcndx: 55, paddr: 0x60, flags 0x0, fcnndx: 124
+00085:	srcndx: 55, paddr: 0x62, flags 0x0, fcnndx: 124
+00085:	srcndx: 55, paddr: 0x64, flags 0x0, fcnndx: 124
+00086:	srcndx: 55, paddr: 0x66, flags 0x0, fcnndx: 124
+00086:	srcndx: 55, paddr: 0x68, flags 0x0, fcnndx: 124
+00086:	srcndx: 55, paddr: 0x6A, flags 0x0, fcnndx: 124
+00086:	srcndx: 55, paddr: 0x6C, flags 0x0, fcnndx: 124
+00090:	srcndx: 55, paddr: 0x6E, flags 0x0, fcnndx: 135
+00090:	srcndx: 55, paddr: 0x70, flags 0x0, fcnndx: 135
+00090:	srcndx: 55, paddr: 0x72, flags 0x0, fcnndx: 135
+00091:	srcndx: 55, paddr: 0x74, flags 0x0, fcnndx: 135
+00094:	srcndx: 55, paddr: 0x76, flags 0x0, fcnndx: 145
+00094:	srcndx: 55, paddr: 0x78, flags 0x0, fcnndx: 145
+00094:	srcndx: 55, paddr: 0x7A, flags 0x0, fcnndx: 145
+00094:	srcndx: 55, paddr: 0x7C, flags 0x0, fcnndx: 145
+00094:	srcndx: 55, paddr: 0x7E, flags 0x0, fcnndx: 145
+00094:	srcndx: 55, paddr: 0x80, flags 0x0, fcnndx: 145
+00097:	srcndx: 55, paddr: 0x82, flags 0x0, fcnndx: 145
+00097:	srcndx: 55, paddr: 0x84, flags 0x0, fcnndx: 145
+00097:	srcndx: 55, paddr: 0x86, flags 0x0, fcnndx: 145
+00097:	srcndx: 55, paddr: 0x88, flags 0x0, fcnndx: 145
+00098:	srcndx: 55, paddr: 0x8A, flags 0x0, fcnndx: 145
+00098:	srcndx: 55, paddr: 0x8C, flags 0x0, fcnndx: 145
+00099:	srcndx: 55, paddr: 0x8E, flags 0x0, fcnndx: 145
+00099:	srcndx: 55, paddr: 0x90, flags 0x0, fcnndx: 145
+00100:	srcndx: 55, paddr: 0x92, flags 0x0, fcnndx: 145
+00100:	srcndx: 55, paddr: 0x94, flags 0x0, fcnndx: 145
+00100:	srcndx: 55, paddr: 0x96, flags 0x0, fcnndx: 145
+00100:	srcndx: 55, paddr: 0x98, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0x9A, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0x9C, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0x9E, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xA0, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xA2, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xA4, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xA6, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xA8, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xAA, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xAC, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xAE, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xB0, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xB2, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xB4, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xB6, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xB8, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xBA, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xBC, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xBE, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xC0, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xC2, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xC4, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xC6, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xC8, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xCA, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xCC, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xCE, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xD0, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xD2, flags 0x0, fcnndx: 145
+00101:	srcndx: 55, paddr: 0xD4, flags 0x0, fcnndx: 145
+00102:	srcndx: 55, paddr: 0xD6, flags 0x0, fcnndx: 145
+00102:	srcndx: 55, paddr: 0xD8, flags 0x0, fcnndx: 145
+00102:	srcndx: 55, paddr: 0xDA, flags 0x0, fcnndx: 145
+00102:	srcndx: 55, paddr: 0xDC, flags 0x0, fcnndx: 145
+00104:	srcndx: 55, paddr: 0xDE, flags 0x0, fcnndx: 161
+00104:	srcndx: 55, paddr: 0xE0, flags 0x0, fcnndx: 161
+00104:	srcndx: 55, paddr: 0xE2, flags 0x0, fcnndx: 161
+00104:	srcndx: 55, paddr: 0xE4, flags 0x0, fcnndx: 161
+00104:	srcndx: 55, paddr: 0xE6, flags 0x0, fcnndx: 161
+00104:	srcndx: 55, paddr: 0xE8, flags 0x0, fcnndx: 161
+00109:	srcndx: 55, paddr: 0xEA, flags 0x0, fcnndx: 161
+00109:	srcndx: 55, paddr: 0xEC, flags 0x0, fcnndx: 161
+00111:	srcndx: 55, paddr: 0xEE, flags 0x0, fcnndx: 161
+00111:	srcndx: 55, paddr: 0xF0, flags 0x0, fcnndx: 161
+00112:	srcndx: 55, paddr: 0xF2, flags 0x0, fcnndx: 161
+00112:	srcndx: 55, paddr: 0xF4, flags 0x0, fcnndx: 161
+00112:	srcndx: 55, paddr: 0xF6, flags 0x0, fcnndx: 161
+00112:	srcndx: 55, paddr: 0xF8, flags 0x0, fcnndx: 161
+00112:	srcndx: 55, paddr: 0xFA, flags 0x0, fcnndx: 161
+00112:	srcndx: 55, paddr: 0xFC, flags 0x0, fcnndx: 161
+00112:	srcndx: 55, paddr: 0xFE, flags 0x0, fcnndx: 161
+00112:	srcndx: 55, paddr: 0x100, flags 0x0, fcnndx: 161
+00114:	srcndx: 55, paddr: 0x102, flags 0x0, fcnndx: 161
+00114:	srcndx: 55, paddr: 0x104, flags 0x0, fcnndx: 161
+00115:	srcndx: 55, paddr: 0x106, flags 0x0, fcnndx: 161
+00116:	srcndx: 55, paddr: 0x108, flags 0x0, fcnndx: 161
+00116:	srcndx: 55, paddr: 0x10A, flags 0x0, fcnndx: 161
+00116:	srcndx: 55, paddr: 0x10C, flags 0x0, fcnndx: 161
+00116:	srcndx: 55, paddr: 0x10E, flags 0x0, fcnndx: 161
+00116:	srcndx: 55, paddr: 0x110, flags 0x0, fcnndx: 161
+00116:	srcndx: 55, paddr: 0x112, flags 0x0, fcnndx: 161
+00118:	srcndx: 55, paddr: 0x114, flags 0x0, fcnndx: 161
+00119:	srcndx: 55, paddr: 0x116, flags 0x0, fcnndx: 161
+00119:	srcndx: 55, paddr: 0x118, flags 0x0, fcnndx: 161
+00119:	srcndx: 55, paddr: 0x11A, flags 0x0, fcnndx: 161
+00120:	srcndx: 55, paddr: 0x11C, flags 0x0, fcnndx: 161
+00120:	srcndx: 55, paddr: 0x11E, flags 0x0, fcnndx: 161
+00120:	srcndx: 55, paddr: 0x120, flags 0x0, fcnndx: 161
+00120:	srcndx: 55, paddr: 0x122, flags 0x0, fcnndx: 161
+00120:	srcndx: 55, paddr: 0x124, flags 0x0, fcnndx: 161
+00120:	srcndx: 55, paddr: 0x126, flags 0x0, fcnndx: 161
+00120:	srcndx: 55, paddr: 0x128, flags 0x0, fcnndx: 161
+00120:	srcndx: 55, paddr: 0x12A, flags 0x0, fcnndx: 161
+00120:	srcndx: 55, paddr: 0x12C, flags 0x0, fcnndx: 161
+00120:	srcndx: 55, paddr: 0x12E, flags 0x0, fcnndx: 161
+00120:	srcndx: 55, paddr: 0x130, flags 0x0, fcnndx: 161
+00120:	srcndx: 55, paddr: 0x132, flags 0x0, fcnndx: 161
+00120:	srcndx: 55, paddr: 0x134, flags 0x0, fcnndx: 161
+00120:	srcndx: 55, paddr: 0x136, flags 0x0, fcnndx: 161
+00122:	srcndx: 55, paddr: 0x138, flags 0x0, fcnndx: 161
+00122:	srcndx: 55, paddr: 0x13A, flags 0x0, fcnndx: 161
+00122:	srcndx: 55, paddr: 0x13C, flags 0x0, fcnndx: 161
+00122:	srcndx: 55, paddr: 0x13E, flags 0x0, fcnndx: 161
+00122:	srcndx: 55, paddr: 0x140, flags 0x0, fcnndx: 161
+00122:	srcndx: 55, paddr: 0x142, flags 0x0, fcnndx: 161
+00122:	srcndx: 55, paddr: 0x144, flags 0x0, fcnndx: 161
+00122:	srcndx: 55, paddr: 0x146, flags 0x0, fcnndx: 161
+00122:	srcndx: 55, paddr: 0x148, flags 0x0, fcnndx: 161
+00122:	srcndx: 55, paddr: 0x14A, flags 0x0, fcnndx: 161
+00122:	srcndx: 55, paddr: 0x14C, flags 0x0, fcnndx: 161
+00122:	srcndx: 55, paddr: 0x14E, flags 0x0, fcnndx: 161
+00122:	srcndx: 55, paddr: 0x150, flags 0x0, fcnndx: 161
+00122:	srcndx: 55, paddr: 0x152, flags 0x0, fcnndx: 161
+00122:	srcndx: 55, paddr: 0x154, flags 0x0, fcnndx: 161
+00124:	srcndx: 55, paddr: 0x156, flags 0x0, fcnndx: 161
+00124:	srcndx: 55, paddr: 0x158, flags 0x0, fcnndx: 161
+00109:	srcndx: 55, paddr: 0x15A, flags 0x0, fcnndx: 161
+00126:	srcndx: 55, paddr: 0x15C, flags 0x0, fcnndx: 161
+00126:	srcndx: 55, paddr: 0x15E, flags 0x0, fcnndx: 161
+00126:	srcndx: 55, paddr: 0x160, flags 0x0, fcnndx: 161
+00126:	srcndx: 55, paddr: 0x162, flags 0x0, fcnndx: 161
+00133:	srcndx: 55, paddr: 0x164, flags 0x0, fcnndx: 187
+00133:	srcndx: 55, paddr: 0x166, flags 0x0, fcnndx: 187
+00134:	srcndx: 55, paddr: 0x168, flags 0x0, fcnndx: 187
+00134:	srcndx: 55, paddr: 0x16A, flags 0x0, fcnndx: 187
+00135:	srcndx: 55, paddr: 0x16C, flags 0x0, fcnndx: 187
+00135:	srcndx: 55, paddr: 0x16E, flags 0x0, fcnndx: 187
+00136:	srcndx: 55, paddr: 0x170, flags 0x0, fcnndx: 187
+00137:	srcndx: 55, paddr: 0x172, flags 0x0, fcnndx: 187
+00138:	srcndx: 55, paddr: 0x174, flags 0x0, fcnndx: 187
+00139:	srcndx: 55, paddr: 0x176, flags 0x0, fcnndx: 187
+00139:	srcndx: 55, paddr: 0x178, flags 0x0, fcnndx: 187
+00140:	srcndx: 55, paddr: 0x17A, flags 0x0, fcnndx: 187
+00141:	srcndx: 55, paddr: 0x17C, flags 0x0, fcnndx: 187
+00143:	srcndx: 55, paddr: 0x17E, flags 0x0, fcnndx: 187
+00143:	srcndx: 55, paddr: 0x180, flags 0x0, fcnndx: 187
+00143:	srcndx: 55, paddr: 0x182, flags 0x0, fcnndx: 187
+00143:	srcndx: 55, paddr: 0x184, flags 0x0, fcnndx: 187
+00145:	srcndx: 55, paddr: 0x186, flags 0x0, fcnndx: 187
+00164:	srcndx: 55, paddr: 0x188, flags 0x0, fcnndx: 207
+00164:	srcndx: 55, paddr: 0x18A, flags 0x0, fcnndx: 207
+00164:	srcndx: 55, paddr: 0x18C, flags 0x0, fcnndx: 207
+00164:	srcndx: 55, paddr: 0x18E, flags 0x0, fcnndx: 207
+00164:	srcndx: 55, paddr: 0x190, flags 0x0, fcnndx: 207
+00166:	srcndx: 55, paddr: 0x192, flags 0x0, fcnndx: 207
+00166:	srcndx: 55, paddr: 0x194, flags 0x0, fcnndx: 207
+00168:	srcndx: 55, paddr: 0x196, flags 0x0, fcnndx: 207
+00169:	srcndx: 55, paddr: 0x198, flags 0x0, fcnndx: 207
+00169:	srcndx: 55, paddr: 0x19A, flags 0x0, fcnndx: 207
+00170:	srcndx: 55, paddr: 0x19C, flags 0x0, fcnndx: 207
+00172:	srcndx: 55, paddr: 0x19E, flags 0x0, fcnndx: 207
+00172:	srcndx: 55, paddr: 0x1A0, flags 0x0, fcnndx: 207
+00172:	srcndx: 55, paddr: 0x1A2, flags 0x0, fcnndx: 207
+00172:	srcndx: 55, paddr: 0x1A4, flags 0x0, fcnndx: 207
+Section 14 line numbers: 3, file offset 0x1A60
+00154:	srcndx: 55, paddr: 0x8, flags 0x0, fcnndx: 197
+00154:	srcndx: 55, paddr: 0xA, flags 0x0, fcnndx: 197
+00156:	srcndx: 55, paddr: 0xC, flags 0x0, fcnndx: 197
+Section 20 line numbers: 16, file offset 0x1A90
+00198:	srcndx: 265, paddr: 0x2BC, flags 0x0, fcnndx: 265
+00199:	srcndx: 265, paddr: 0x2BE, flags 0x0, fcnndx: 265
+00200:	srcndx: 265, paddr: 0x2C0, flags 0x0, fcnndx: 265
+00200:	srcndx: 265, paddr: 0x2C2, flags 0x0, fcnndx: 265
+00201:	srcndx: 265, paddr: 0x2C4, flags 0x0, fcnndx: 265
+00202:	srcndx: 265, paddr: 0x2C6, flags 0x0, fcnndx: 265
+00203:	srcndx: 265, paddr: 0x2C8, flags 0x0, fcnndx: 265
+00206:	srcndx: 265, paddr: 0x2CA, flags 0x0, fcnndx: 265
+00207:	srcndx: 265, paddr: 0x2CC, flags 0x0, fcnndx: 265
+00208:	srcndx: 265, paddr: 0x2CE, flags 0x0, fcnndx: 265
+00209:	srcndx: 265, paddr: 0x2D0, flags 0x0, fcnndx: 265
+00211:	srcndx: 265, paddr: 0x2D2, flags 0x0, fcnndx: 265
+00213:	srcndx: 265, paddr: 0x2D4, flags 0x0, fcnndx: 265
+00214:	srcndx: 265, paddr: 0x2D6, flags 0x0, fcnndx: 265
+00215:	srcndx: 265, paddr: 0x2D8, flags 0x0, fcnndx: 265
+00216:	srcndx: 265, paddr: 0x2DA, flags 0x0, fcnndx: 265
+Section 25 line numbers: 1, file offset 0x1B90
+00009:	srcndx: 450, paddr: 0x2FE, flags 0x0, fcnndx: 452
+Section 26 line numbers: 60, file offset 0x1BA0
+00064:	srcndx: 463, paddr: 0x244, flags 0x0, fcnndx: 463
+00064:	srcndx: 463, paddr: 0x246, flags 0x0, fcnndx: 463
+00064:	srcndx: 463, paddr: 0x248, flags 0x0, fcnndx: 463
+00064:	srcndx: 463, paddr: 0x24A, flags 0x0, fcnndx: 463
+00064:	srcndx: 463, paddr: 0x24C, flags 0x0, fcnndx: 463
+00064:	srcndx: 463, paddr: 0x24E, flags 0x0, fcnndx: 463
+00064:	srcndx: 463, paddr: 0x250, flags 0x0, fcnndx: 463
+00064:	srcndx: 463, paddr: 0x252, flags 0x0, fcnndx: 463
+00064:	srcndx: 463, paddr: 0x254, flags 0x0, fcnndx: 463
+00068:	srcndx: 463, paddr: 0x256, flags 0x0, fcnndx: 463
+00068:	srcndx: 463, paddr: 0x258, flags 0x0, fcnndx: 463
+00068:	srcndx: 463, paddr: 0x25A, flags 0x0, fcnndx: 463
+00068:	srcndx: 463, paddr: 0x25C, flags 0x0, fcnndx: 463
+00068:	srcndx: 463, paddr: 0x25E, flags 0x0, fcnndx: 463
+00068:	srcndx: 463, paddr: 0x260, flags 0x0, fcnndx: 463
+00071:	srcndx: 463, paddr: 0x262, flags 0x0, fcnndx: 463
+00072:	srcndx: 463, paddr: 0x264, flags 0x0, fcnndx: 463
+00074:	srcndx: 463, paddr: 0x266, flags 0x0, fcnndx: 463
+00075:	srcndx: 463, paddr: 0x268, flags 0x0, fcnndx: 463
+00078:	srcndx: 463, paddr: 0x26A, flags 0x0, fcnndx: 463
+00079:	srcndx: 463, paddr: 0x26C, flags 0x0, fcnndx: 463
+00086:	srcndx: 463, paddr: 0x26E, flags 0x0, fcnndx: 463
+00076:	srcndx: 486, paddr: 0x270, flags 0x0, fcnndx: 486
+00076:	srcndx: 486, paddr: 0x272, flags 0x0, fcnndx: 486
+00076:	srcndx: 486, paddr: 0x274, flags 0x0, fcnndx: 486
+00076:	srcndx: 486, paddr: 0x276, flags 0x0, fcnndx: 486
+00076:	srcndx: 486, paddr: 0x278, flags 0x0, fcnndx: 486
+00076:	srcndx: 486, paddr: 0x27A, flags 0x0, fcnndx: 486
+00076:	srcndx: 486, paddr: 0x27C, flags 0x0, fcnndx: 486
+00076:	srcndx: 486, paddr: 0x27E, flags 0x0, fcnndx: 486
+00076:	srcndx: 486, paddr: 0x280, flags 0x0, fcnndx: 486
+00080:	srcndx: 486, paddr: 0x282, flags 0x0, fcnndx: 486
+00080:	srcndx: 486, paddr: 0x284, flags 0x0, fcnndx: 486
+00080:	srcndx: 486, paddr: 0x286, flags 0x0, fcnndx: 486
+00080:	srcndx: 486, paddr: 0x288, flags 0x0, fcnndx: 486
+00080:	srcndx: 486, paddr: 0x28A, flags 0x0, fcnndx: 486
+00080:	srcndx: 486, paddr: 0x28C, flags 0x0, fcnndx: 486
+00084:	srcndx: 486, paddr: 0x28E, flags 0x0, fcnndx: 486
+00084:	srcndx: 486, paddr: 0x290, flags 0x0, fcnndx: 486
+00085:	srcndx: 486, paddr: 0x292, flags 0x0, fcnndx: 486
+00085:	srcndx: 486, paddr: 0x294, flags 0x0, fcnndx: 486
+00090:	srcndx: 486, paddr: 0x296, flags 0x0, fcnndx: 486
+00090:	srcndx: 486, paddr: 0x298, flags 0x0, fcnndx: 486
+00090:	srcndx: 486, paddr: 0x29A, flags 0x0, fcnndx: 486
+00090:	srcndx: 486, paddr: 0x29C, flags 0x0, fcnndx: 486
+00090:	srcndx: 486, paddr: 0x29E, flags 0x0, fcnndx: 486
+00090:	srcndx: 486, paddr: 0x2A0, flags 0x0, fcnndx: 486
+00094:	srcndx: 486, paddr: 0x2A2, flags 0x0, fcnndx: 486
+00094:	srcndx: 486, paddr: 0x2A4, flags 0x0, fcnndx: 486
+00094:	srcndx: 486, paddr: 0x2A6, flags 0x0, fcnndx: 486
+00094:	srcndx: 486, paddr: 0x2A8, flags 0x0, fcnndx: 486
+00094:	srcndx: 486, paddr: 0x2AA, flags 0x0, fcnndx: 486
+00096:	srcndx: 486, paddr: 0x2AC, flags 0x0, fcnndx: 486
+00097:	srcndx: 486, paddr: 0x2AE, flags 0x0, fcnndx: 486
+00097:	srcndx: 486, paddr: 0x2B0, flags 0x0, fcnndx: 486
+00100:	srcndx: 486, paddr: 0x2B2, flags 0x0, fcnndx: 486
+00101:	srcndx: 486, paddr: 0x2B4, flags 0x0, fcnndx: 486
+00104:	srcndx: 486, paddr: 0x2B6, flags 0x0, fcnndx: 486
+00105:	srcndx: 486, paddr: 0x2B8, flags 0x0, fcnndx: 486
+00110:	srcndx: 486, paddr: 0x2BA, flags 0x0, fcnndx: 486
+
